@@ -16,6 +16,7 @@ services:
       - .:/src
     depends_on:
       - api
+    command: ["yarn", "start"]
   api:
     build:
       context: .

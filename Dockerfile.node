@@ -7,9 +7,9 @@ WORKDIR $WORKING_DIR
 
 COPY $PACKAGE_PATH/package.json $WORKING_DIR/package.json
 COPY $PACKAGE_PATH/package-lock.json $WORKING_DIR/package-lock.json
-RUN npm install
+RUN npm install -g -s --no-progress yarn && \
+    yarn 
 
 COPY . /src
 
 VOLUME $WORKING_DIR/node_modules
-CMD [ "npm", "start" ]
