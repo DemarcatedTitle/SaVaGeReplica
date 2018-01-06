@@ -1,0 +1,67 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 5s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 80px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { display: none;
+  transform: rotate(0deg); }
+  to { display: block;
+  transform: rotate(360deg); }
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.mainContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.paper {
+  width: 33vw;
+  padding: 5px;
+}
+.section {
+  flex-grow: 1;
+  display: flex;
+}
+.controls {
+  flex-grow: .5;
+}
+.upload div {
+  width: inherit;
+  height: inherit;
+  flex-grow: 1;
+  border: 1px dashed black;
+}
+
+img {
+  max-width: 30vw;
+}
+.outputCard {
+  display: flex;
+  flex-direction: column;
+}

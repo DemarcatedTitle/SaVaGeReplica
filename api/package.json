@@ -1,0 +1,33 @@
+{
+  "name": "savage-api",
+  "version": "0.0.0",
+  "description": "SaVaGe",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "start-qa": "node server.js",
+    "drop-tables": "./src/bin/drop-tables.js",
+    "rebuild-db": "npm run drop-tables && knex migrate:latest && knex seed:run",
+    "migrate-seed": "knex migrate:latest && knex seed:run"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "hapi": "^17.2.0",
+    "knex": "^0.14.2",
+    "pg": "^7.4.1",
+    "redis": "^2.8.0",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.8"
+  }
+}

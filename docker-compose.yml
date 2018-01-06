@@ -1,0 +1,55 @@
+version: '3'
+services:
+  front-end:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+      args:
+        PACKAGE_PATH: ./front-end
+        WORKING_DIR: /src/front-end
+    environment:
+      BACKEND: api:9000
+      NODE_PATH: /src/front-end/src
+    env_file:
+      - ./common.env
+    volumes:
+      - .:/src
+    depends_on:
+      - api
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.nodego
+      args:
+        PACKAGE_PATH: ./api
+        WORKING_DIR: /src/api
+    env_file:
+      - ./common.env
+    volumes:
+      - .:/src
+    # depends_on:
+    #   - postgres
+    #   - migrate-seed
+    # entrypoint: ./wait-for-it.sh -t 0 postgres:5432 --
+    command: ["yarn", "start"]
+  # postgres:
+  #   image: postgres:10-alpine
+  #   env_file:
+  #     - ./common.env
+  # redis:
+  #   image: redis:4-alpine
+  # migrate-seed:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.node
+    #   args:
+    #     PACKAGE_PATH: ./api
+    #     WORKING_DIR: /src/api
+    # env_file:
+    #   - ./common.env
+    # volumes:
+    #   - .:/src
+    # depends_on:
+    #   - postgres
+    # entrypoint: ./wait-for-it.sh -t 0 postgres:5432 --
+    # command: ["npm", "run", "migrate-seed"]

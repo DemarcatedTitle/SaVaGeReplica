@@ -1,0 +1,21 @@
+version: '3'
+services:
+  front-end:
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_ENV=development
+  # migrate-seed:
+  #   environment:
+  #     - APP_ENV=development
+  api:
+     ports:
+      - "9000:9000"
+     environment:
+      - APP_ENV=development
+  # postgres:
+  #   ports:
+  #     - "5432:5432"
+  # oidc:
+  #   ports:
+  #     - "7000:9000"
