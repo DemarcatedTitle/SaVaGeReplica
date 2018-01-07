@@ -8,22 +8,22 @@ import RaisedButton from 'material-ui/RaisedButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import ResultCard from './ResultCard';
 
+/* eslint-disable no-console */
 export default class TextBox extends React.Component {
   constructor(props) {
     super(props);
     this.handleTyping = this.handleTyping.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.fetch = this.fetch.bind(this);
+    this.uploadImage = this.uploadImage.bind(this);
+    this.checkProgress = this.checkProgress.bind(this);
     this.state = {
       value: 0,
       accdpted: [],
       rejected: [],
     };
   }
-  componentDidMount() {}
   handleTyping(event) {
-    console.log(this.props.resultImage.uploadID);
     this.props.onTextTyped({ id: event.target.id, value: event.target.value });
   }
   handleChange(event) {
@@ -36,7 +36,17 @@ export default class TextBox extends React.Component {
     //Toggle loading here
     this.props.onSubmit(!this.props.loading);
   }
-  fetch() {
+  checkProgress() {
+    var data = new FormData();
+    // Object.entries(this.props.text).forEach(function(field) {
+    //   if (field[1]) {
+    //     data.append(field[1].id, field[1].value);
+    //   }
+    // });
+    data.append('uploadID', this.props.resultImage.uploadID);
+    this.props.fetchProgress(data);
+  }
+  uploadImage() {
     var data = new FormData();
     Object.entries(this.props.text).forEach(function(field) {
       if (field[1]) {
@@ -154,8 +164,13 @@ export default class TextBox extends React.Component {
                 />
               </div>
               <RaisedButton
-                onClick={this.fetch}
+                onClick={this.uploadImage}
                 label="Start Process"
+                primary={true}
+              />
+              <RaisedButton
+                onClick={this.checkProgress}
+                label="Check progress"
                 primary={true}
               />
             </form>
@@ -164,6 +179,7 @@ export default class TextBox extends React.Component {
         <div className="section">
           <Paper className="paper outputCard">
             Current Image
+            <div>{this.props.progress}</div>
             <ResultCard
               imgurl={this.props.resultImage.imgurl}
               loading={this.props.resultImage.loading}

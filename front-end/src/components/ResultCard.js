@@ -7,10 +7,9 @@ export default class ResultCard extends React.PureComponent {
   }
   save() {
     // var blob = new Blob(['Hello world'], { type: 'text/plain;charset=utf-8' });
-    const blob = this.props.imgurl;
+    // const blob = this.props.imgurl;
   }
   render() {
-    console.log(this.props);
     if (this.props.loading) {
       return <p>Loading</p>;
     } else if (this.props.imgurl) {
