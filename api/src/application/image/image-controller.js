@@ -47,7 +47,7 @@ module.exports = {
       defaults.rep = 0;
       defaults.nth = 0;
       defaults.mode = 1;
-      fs.writeFile('./images' + imageID, request.payload.file, err => {
+      fs.writeFile('./images/' + imageID, request.payload.file, err => {
         if (err) throw err;
         console.log('The file has been saved!');
         function numShapes(numofshapes) {
@@ -72,7 +72,7 @@ module.exports = {
         }
         const shapes = numShapes(request.payload.numofshapes);
         // console.log(typeof shapes);
-        const command = `primitive -i ${imageID} -n ${shapes} -m 3 -v -o ./images/${imageID}.svg`;
+        const command = `primitive -i ./images/${imageID} -n ${shapes} -m 3 -v -o ./images/${imageID}.svg`;
         console.log(command);
         //
         // Generate a uuid, reply with that uuid
