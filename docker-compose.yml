@@ -37,8 +37,8 @@ services:
   #   image: postgres:10-alpine
   #   env_file:
   #     - ./common.env
-  # redis:
-  #   image: redis:4-alpine
+  redis:
+    image: redis:4-alpine
   # migrate-seed:
     # build:
     #   context: .
