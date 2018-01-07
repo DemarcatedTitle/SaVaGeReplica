@@ -1,8 +1,9 @@
 const Hapi = require('hapi');
+const imageRoutes = require('./src/application/image/image-routes.js');
 
 const server = new Hapi.Server({ port: 9000 });
 
-server.route({ method: 'GET', path: '/api/hello', handler: () => 'ok' });
+server.route(imageRoutes);
 
 server
   .start()
