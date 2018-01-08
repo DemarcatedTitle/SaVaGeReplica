@@ -1,3 +1,4 @@
+import { fetchProgress } from './progress';
 export const uploadImage = function uploadImage(payload) {
   return function(dispatch) {
     dispatch({ type: 'UPLOAD_STARTED' });
@@ -11,10 +12,13 @@ export const uploadImage = function uploadImage(payload) {
           response.json().then(data => {
             // const imgurl = URL.createObjectURL(data);
             const uploadID = data.uploadID;
-            return dispatch({
+            dispatch({
               type: 'UPLOAD_SUCCEEDED',
               uploadID: uploadID,
             });
+            var formData = new FormData();
+            formData.append('uploadID', uploadID);
+            dispatch(fetchProgress(formData));
           });
         } else {
           return dispatch({
