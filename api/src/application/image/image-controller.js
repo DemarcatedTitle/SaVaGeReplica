@@ -104,11 +104,16 @@ module.exports = {
             const currentStep = parseInt(data.slice(0, data.indexOf(':')));
             // console.log(currentStep);
             // console.log(``);
+            //
+            //
+            // TODO change it so it doesn't undo setting it to 1
+            //
             console.log(`currentStep: ${currentStep}\nshapes: ${shapes}`);
             const progress = isNaN(currentStep) ? 0 : currentStep / shapes;
             console.log(progress);
-            client.set(uploadID, progress);
-            client.set(uploadID, progress);
+            if (!isNaN(currentStep)) {
+              client.set(uploadID, progress);
+            }
           });
         client.set(uploadID, 0, function() {
           resolve(h.response({ uploadID: uploadID }));
