@@ -7,6 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import ResultCard from './ResultCard';
+import LinearProgress from 'material-ui/LinearProgress';
 
 /* eslint-disable no-console */
 export default class TextBox extends React.Component {
@@ -38,11 +39,6 @@ export default class TextBox extends React.Component {
   }
   checkProgress() {
     var data = new FormData();
-    // Object.entries(this.props.text).forEach(function(field) {
-    //   if (field[1]) {
-    //     data.append(field[1].id, field[1].value);
-    //   }
-    // });
     data.append('uploadID', this.props.resultImage.uploadID);
     this.props.fetchProgress(data);
   }
@@ -180,6 +176,7 @@ export default class TextBox extends React.Component {
           <Paper className="paper outputCard">
             Current Image
             <div>{this.props.progress}</div>
+            <LinearProgress mode="determinate" value={this.props.progress} />
             <ResultCard
               imgurl={this.props.resultImage.imgurl}
               loading={this.props.resultImage.loading}
