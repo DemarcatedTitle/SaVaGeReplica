@@ -34,12 +34,12 @@ module.exports = {
             console.log(uploadID);
             const yoursvg = imageDB.getImage(uploadID);
             yoursvg.then(thesvg => {
-              console.log(Object.entries(thesvg));
-              console.log(thesvg);
+              console.trace();
+              console.log(thesvg[0].image);
               if (thesvg == []) {
                 resolve(h.response({ progress: percent.toString() }));
               } else {
-                const response = h.response(thesvg);
+                const response = h.response(thesvg[0].image);
                 response.type('image/svg+xml');
                 resolve(h.response(response));
               }
