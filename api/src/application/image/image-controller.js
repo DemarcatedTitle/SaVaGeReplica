@@ -1,13 +1,15 @@
 const fs = require('fs');
 const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
+const imageDB = require('../../../imageDB.js');
 // const knexfile = require('../../../knexfile.js');
 // const knex = require('../../lib/knex.js');
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
-const uploadID = uuidv4();
+// const uploadID = uuidv4();
 module.exports = {
   get: (request, h, err) => {
+    const uploadID = request.params.uploadID;
     return new Promise(function(resolve) {
       if (err) {
         throw err;
@@ -27,8 +29,25 @@ module.exports = {
       client.get(uploadID, function(err, results) {
         if (results !== null) {
           const percent = parseInt(results * 100);
-          console.log(percent);
-          resolve(h.response({ progress: percent.toString() }));
+          if (percent === 100) {
+            // currently a race condition
+            console.log(uploadID);
+            const yoursvg = imageDB.getImage(uploadID);
+            yoursvg.then(thesvg => {
+              console.log(Object.entries(thesvg));
+              console.log(thesvg);
+              if (thesvg == []) {
+                resolve(h.response({ progress: percent.toString() }));
+              } else {
+                const response = h.response(thesvg);
+                response.type('image/svg+xml');
+                resolve(h.response(response));
+              }
+            });
+          } else {
+            console.log(percent);
+            resolve(h.response({ progress: percent.toString() }));
+          }
         } else {
           resolve(h.response('error'));
         }
@@ -43,7 +62,7 @@ module.exports = {
       const imageID = uuidv4();
       console.log(`imageID is: \n\n${imageID}\n\n`);
       let defaults = {};
-      defaults.numofshapes = 10;
+      defaults.numofshapes = 2;
       defaults.rep = 0;
       defaults.nth = 0;
       defaults.mode = 1;
@@ -96,6 +115,12 @@ module.exports = {
             // const response = h.response(yoursvg);
             // response.type('image/svg+xml');
             // return response;
+            const dbImageShape = {
+              image: yoursvg,
+              name: 'placeholder',
+              image_id: imageID,
+            };
+            imageDB.addImage(dbImageShape);
           })
           .stdout.on('data', function(data) {
             //
@@ -112,11 +137,11 @@ module.exports = {
             const progress = isNaN(currentStep) ? 0 : currentStep / shapes;
             console.log(progress);
             if (!isNaN(currentStep)) {
-              client.set(uploadID, progress);
+              client.set(imageID, progress);
             }
           });
-        client.set(uploadID, 0, function() {
-          resolve(h.response({ uploadID: uploadID }));
+        client.set(imageID, 0, function() {
+          resolve(h.response({ uploadID: imageID }));
         });
       });
     });
