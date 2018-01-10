@@ -13,15 +13,16 @@ const mapStateToProps = state => {
   const progress = state.progress.slice(-1)[0]
     ? parseInt(state.progress.slice(-1)[0].progress, 10)
     : '';
-  console.log(
-    `TextAppContainer.js ${JSON.stringify(state.progress.slice(-1)[0])}`
-  );
   if (progress === undefined) {
     console.log('\n\n\nprogress is undefined\n\n\n');
   }
   const isFetching = state.progress.slice(-1)[0]
     ? state.progress.slice(-1)[0].isFetching
     : false;
+  const imgurl = state.progress.slice(-1)[0]
+    ? state.progress.slice(-1)[0].imgurl
+    : '';
+  console.log(state);
 
   return {
     text: text,
@@ -29,6 +30,7 @@ const mapStateToProps = state => {
     resultImage: resultImage,
     progress: progress,
     isFetching: isFetching,
+    imgurl: imgurl,
   };
 };
 

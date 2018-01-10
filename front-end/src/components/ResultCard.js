@@ -10,9 +10,8 @@ export default class ResultCard extends React.PureComponent {
     // const blob = this.props.imgurl;
   }
   render() {
-    if (this.props.loading) {
-      return <p>Loading</p>;
-    } else if (this.props.imgurl) {
+    console.log(this.props.imgurl);
+    if (this.props.imgurl !== '' && typeof this.props.imgurl === 'string') {
       return (
         <div className="outputCard">
           <img
@@ -21,7 +20,7 @@ export default class ResultCard extends React.PureComponent {
             src={this.props.imgurl}
           />
           <a download="yourpicture.svg" href={this.props.imgurl}>
-            <RaisedButton label="Start Process" primary={true} />
+            <RaisedButton label="Download Image" primary={true} />
           </a>
         </div>
       );

@@ -176,12 +176,15 @@ export default class TextBox extends React.Component {
           <Paper className="paper outputCard">
             Current Image
             <div>{this.props.progress}</div>
-            <LinearProgress mode="determinate" value={this.props.progress} />
-            <ResultCard
-              imgurl={this.props.resultImage.imgurl}
-              loading={this.props.resultImage.loading}
-              progress={this.props.progress}
-            />
+            {this.props.imgurl === '' ? (
+              <LinearProgress mode="determinate" value={this.props.progress} />
+            ) : (
+              <ResultCard
+                imgurl={this.props.imgurl}
+                loading={this.props.resultImage.loading}
+                progress={this.props.progress}
+              />
+            )}
           </Paper>
         </div>
       </div>

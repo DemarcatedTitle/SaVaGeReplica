@@ -10,30 +10,47 @@ export const fetchProgress = function fetchProgress(payload) {
     })
       .then(function(response) {
         if (response.status === 200) {
-          response.json().then(data => {
-            // const imgurl = URL.createObjectURL(data);
-            const progress = data.progress;
-            if (progress < 100) {
-              console.log('setTimeout');
-              setTimeout(
-                (dispatch, payload) => {
-                  console.log(
-                    `setTimeout payload is ${JSON.stringify(
-                      payload.get('uploadID')
-                    )}`
+          console.log();
+          const contentType = response.headers.get('content-type');
+          if (contentType === 'application/json; charset=utf-8') {
+            response
+              .json()
+              .then(data => {
+                console.log(data);
+                const progress = data.progress;
+                if (isNaN(progress)) {
+                } else if (progress < 100) {
+                  console.log('setTimeout');
+                  setTimeout(
+                    (dispatch, payload) => {
+                      console.log(
+                        `setTimeout payload is ${JSON.stringify(
+                          payload.get('uploadID')
+                        )}`
+                      );
+                      dispatch(fetchProgress(payload));
+                    },
+                    2000,
+                    dispatch,
+                    payload
                   );
-                  dispatch(fetchProgress(payload));
-                },
-                2000,
-                dispatch,
-                payload
-              );
-            }
-            return dispatch({
-              type: 'PROGRESS_CHECKED',
-              progress: progress,
-            });
-          });
+                }
+                return dispatch({
+                  type: 'PROGRESS_CHECKED',
+                  progress: progress,
+                });
+              })
+              .catch(err => console.log(err));
+          } else if (contentType === 'image/svg+xml') {
+            response
+              .blob()
+              .then(data => {
+                console.log("It's an image");
+                const imgurl = URL.createObjectURL(data);
+                dispatch({ type: 'RECEIVED_IMAGE', imgurl: imgurl });
+              })
+              .catch(err => console.log(err));
+          }
         } else {
           return dispatch({
             type: 'PROGRESS_FAILED',
