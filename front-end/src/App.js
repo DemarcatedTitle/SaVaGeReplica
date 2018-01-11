@@ -4,7 +4,11 @@ import './App.css';
 import AppBar from 'material-ui/AppBar';
 import TextAppContainer from './containers/TextAppContainer.js';
 import Drawer from 'material-ui/Drawer';
+import { NavLink } from 'react-router-dom';
 import MenuItem from 'material-ui/MenuItem';
+import createHistory from 'history/createBrowserHistory';
+const history = createHistory();
+const location = history.location;
 
 class App extends React.Component {
   constructor(props) {
@@ -46,14 +50,16 @@ class App extends React.Component {
           onRequestChange={open => this.setState({ open })}
         >
           <MenuItem checked={true} onClick={this.handleClose}>
-            Replicator
+            <NavLink to="/replicator">Replicator</NavLink>
           </MenuItem>
-          <MenuItem onClick={this.handleClose}>Gallery</MenuItem>
+          <MenuItem onClick={this.handleClose}>
+            <NavLink to="/gallery">Gallery</NavLink>
+          </MenuItem>
         </Drawer>
-        {this.props.loading ? '' : <TextAppContainer />}
       </div>
     );
   }
 }
 
 export default App;
+// {this.props.loading ? '' : <TextAppContainer />}
