@@ -40,9 +40,6 @@ class App extends React.Component {
           showMenuIconButton={true}
           onLeftIconButtonClick={this.handleToggle}
         />
-        <div>
-          <a href={loginLink}>Log In</a>
-        </div>
         <Drawer
           docked={false}
           width={200}
