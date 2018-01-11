@@ -71,10 +71,10 @@ module.exports = {
         console.log('The file has been saved!');
         function numShapes(numofshapes) {
           if (
-            typeof request.payload.numofshapes === 'number' &&
-            request.payload.numofshapes < 10000
+            typeof parseInt(numofshapes) === 'number' &&
+            numofshapes < 10000
           ) {
-            return request.payload.numofshapes;
+            return numofshapes;
           } else {
             return defaults.numofshapes;
           }
@@ -91,7 +91,7 @@ module.exports = {
         }
         const shapes = numShapes(request.payload.numofshapes);
         // console.log(typeof shapes);
-        const command = `primitive -i ./images/${imageID} -n ${shapes} -m 3 -v -o ./images/${imageID}.svg`;
+        const command = `primitive -i ./images/${imageID} -n ${shapes} -m 2 -v -o ./images/${imageID}.svg`;
         console.log(command);
         //
         // Generate a uuid, reply with that uuid
