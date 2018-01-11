@@ -20,7 +20,7 @@ export default class TextBox extends React.Component {
     this.checkProgress = this.checkProgress.bind(this);
     this.state = {
       value: 0,
-      accdpted: [],
+      accepted: [],
       rejected: [],
     };
   }
@@ -66,7 +66,7 @@ export default class TextBox extends React.Component {
             }}
           >
             <div>
-              {this.state.accepted ? (
+              {this.state.accepted[0] ? (
                 <img alt="Your upload" src={this.state.accepted[0].preview} />
               ) : (
                 ''
@@ -175,7 +175,6 @@ export default class TextBox extends React.Component {
         <div className="section">
           <Paper className="paper outputCard">
             Current Image
-            <div>{this.props.progress}</div>
             {this.props.imgurl === '' ? (
               <LinearProgress mode="determinate" value={this.props.progress} />
             ) : (

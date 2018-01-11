@@ -24,6 +24,10 @@ const progress = (
     case 'RECEIVED_IMAGE':
       newState['imgurl'] = action.imgurl;
       return [...state, newState];
+    case 'UPLOAD_SUCCEEDED':
+      newState['imgurl'] = '';
+      newState['progress'] = 0;
+      return [...state, newState];
     default:
       return state;
   }
