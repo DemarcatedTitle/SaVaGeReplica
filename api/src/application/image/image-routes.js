@@ -29,6 +29,9 @@ module.exports = [
     config: {
       tags: ['api'],
       description: 'Image upload route',
+      payload: {
+        maxBytes: 11457280,
+      },
       // validate: {
       //   payload: {
       //     outputfilename: Joi.string(),
