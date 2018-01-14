@@ -17,9 +17,8 @@ export default class TextBox extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.uploadImage = this.uploadImage.bind(this);
-    this.checkProgress = this.checkProgress.bind(this);
     this.state = {
-      value: 0,
+      value: 1,
       accepted: [],
       rejected: [],
     };
@@ -36,11 +35,6 @@ export default class TextBox extends React.Component {
     event.preventDefault();
     //Toggle loading here
     this.props.onSubmit(!this.props.loading);
-  }
-  checkProgress() {
-    var data = new FormData();
-    data.append('uploadID', this.props.resultImage.uploadID);
-    this.props.fetchProgress(data);
   }
   uploadImage() {
     var data = new FormData();
@@ -77,30 +71,33 @@ export default class TextBox extends React.Component {
         <div className="controls section">
           <Paper className="paper">
             <form onSubmit={this.handleSubmit}>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="outputfilename"
                   onChange={this.handleTyping}
                   hintText="Output Filename"
                 />
-                <DropDownMenu
-                  value={this.state.value}
+              </div>
+              <div className="formElement">
+                <SelectField
+                  floatingLabelText="Output Filetype"
+                  value={2}
                   onChange={this.handleChange}
                 >
                   <MenuItem value={0} primaryText="png" />
                   <MenuItem value={1} primaryText="jpg" />
                   <MenuItem value={2} primaryText="svg" />
                   <MenuItem value={3} primaryText="gif" />
-                </DropDownMenu>
+                </SelectField>
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="numofshapes"
                   onChange={this.handleTyping}
                   hintText="Number of Shapes"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 <SelectField
                   value={this.state.value}
                   onChange={this.handleChange}
@@ -117,42 +114,42 @@ export default class TextBox extends React.Component {
                   <MenuItem value={8} primaryText="Polygon" />
                 </SelectField>
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="rep"
                   onChange={this.handleTyping}
                   hintText="Rep"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="nth"
                   onChange={this.handleTyping}
                   hintText="Nth"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="resize"
                   onChange={this.handleTyping}
                   hintText="Resize"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="outputsize"
                   onChange={this.handleTyping}
                   hintText="Output Image Size"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 <TextField
                   id="alpha"
                   onChange={this.handleTyping}
                   hintText="Alpha"
                 />
               </div>
-              <div>
+              <div className="formElement">
                 #<TextField
                   id="backgroundcolor"
                   onChange={this.handleTyping}
@@ -162,11 +159,6 @@ export default class TextBox extends React.Component {
               <RaisedButton
                 onClick={this.uploadImage}
                 label="Start Process"
-                primary={true}
-              />
-              <RaisedButton
-                onClick={this.checkProgress}
-                label="Check progress"
                 primary={true}
               />
             </form>

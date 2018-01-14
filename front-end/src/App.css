@@ -65,3 +65,14 @@ img {
   display: flex;
   flex-direction: column;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.formElement {
+  justify-content: center;
+  display: flex;
+}
