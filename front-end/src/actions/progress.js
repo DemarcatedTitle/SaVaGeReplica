@@ -10,7 +10,6 @@ export const fetchProgress = function fetchProgress(payload) {
     })
       .then(function(response) {
         if (response.status === 200) {
-          console.log();
           const contentType = response.headers.get('content-type');
           if (contentType === 'application/json; charset=utf-8') {
             response

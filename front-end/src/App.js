@@ -3,6 +3,7 @@ import './App.css';
 // import Loading from './components/Loading';
 import AppBar from 'material-ui/AppBar';
 import TextAppContainer from './containers/TextAppContainer.js';
+import GalleryContainer from './containers/GalleryContainer.js';
 import SavageGallery from './components/SavageGallery';
 import Drawer from 'material-ui/Drawer';
 import { NavLink } from 'react-router-dom';
@@ -35,6 +36,7 @@ class App extends React.Component {
     const page = this.props.match.params.page;
     const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
     console.log(pageTitle);
+    const validRoutes = ['replicator', 'gallery'];
 
     return (
       <div className="App">
@@ -65,8 +67,8 @@ class App extends React.Component {
           </NavLink>
         </Drawer>
         {page === 'replicator' ? <TextAppContainer /> : ''}
-        {page === 'gallery' ? <SavageGallery /> : ''}
-        {page !== 'replicator' || 'gallery' ? 'Page not found' : ''}
+        {page === 'gallery' ? <GalleryContainer /> : ''}
+        {!validRoutes.includes(page) ? 'Page not found' : ''}
       </div>
     );
   }

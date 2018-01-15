@@ -40,6 +40,6 @@ exports.getImage = function getImage(imageID) {
   return getQuery;
 };
 exports.getAllImages = function getAllImages() {
-  var getAll = knex.select().from('svg_images');
+  var getAll = knex.select('image_id').from('svg_images');
   return getAll;
 };
