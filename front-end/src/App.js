@@ -3,6 +3,7 @@ import './App.css';
 // import Loading from './components/Loading';
 import AppBar from 'material-ui/AppBar';
 import TextAppContainer from './containers/TextAppContainer.js';
+import SavageGallery from './components/SavageGallery';
 import Drawer from 'material-ui/Drawer';
 import { NavLink } from 'react-router-dom';
 import MenuItem from 'material-ui/MenuItem';
@@ -13,7 +14,7 @@ const location = history.location;
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { open: false };
+    this.state = { open: false, component: '' };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
@@ -31,11 +32,14 @@ class App extends React.Component {
     // &redirect_uri=${config.redirectUri}
     // &nonce=nonce
     const loginLink = `http://localhost.test:7000/op/auth?client_id=client_id&response_type=code&scope=openid&redirect_uri=http://localhost:3000&nonce=1531abc`;
+    const page = this.props.match.params.page;
+    const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
+    console.log(pageTitle);
 
     return (
       <div className="App">
         <AppBar
-          title="Replicator"
+          title={pageTitle}
           iconClassNameRight="muidocs-icon-navigation-expand-more"
           showMenuIconButton={true}
           onLeftIconButtonClick={this.handleToggle}
@@ -46,13 +50,23 @@ class App extends React.Component {
           open={this.state.open}
           onRequestChange={open => this.setState({ open })}
         >
-          <MenuItem checked={true} onClick={this.handleClose}>
-            <NavLink to="/replicator">Replicator</NavLink>
-          </MenuItem>
-          <MenuItem onClick={this.handleClose}>
-            <NavLink to="/gallery">Gallery</NavLink>
-          </MenuItem>
+          <NavLink to="/replicator">
+            <MenuItem
+              checked={page === 'replicator'}
+              onClick={this.handleClose}
+            >
+              Replicator
+            </MenuItem>
+          </NavLink>
+          <NavLink to="/gallery">
+            <MenuItem checked={page === 'gallery'} onClick={this.handleClose}>
+              Gallery{' '}
+            </MenuItem>
+          </NavLink>
         </Drawer>
+        {page === 'replicator' ? <TextAppContainer /> : ''}
+        {page === 'gallery' ? <SavageGallery /> : ''}
+        {page !== 'replicator' || 'gallery' ? 'Page not found' : ''}
       </div>
     );
   }

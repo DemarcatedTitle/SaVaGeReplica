@@ -7,11 +7,24 @@ export default class SavageGallery extends React.PureComponent {
     super(props);
   }
   render() {
-    const tilesData = [{ img: test, title: 'Test!', author: 'me!' }];
+    const tilesData = [
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+      { img: test, title: 'Test!', author: 'me!' },
+    ];
     return (
       <div className="SavageGallery">
         Savage Gallery!
-        <GridList cellHeight={180}>
+        <GridList cols={3} cellHeight={360}>
           <Subheader>December</Subheader>
           {tilesData.map(tile => (
             <GridTile

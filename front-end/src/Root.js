@@ -14,9 +14,7 @@ const Root = ({ store }) => (
   <Provider store={store}>
     <Router>
       <div>
-        <App />
-        <Route path="/replicator" component={TextAppContainer} />
-        <Route path="/gallery" component={SavageGallery} />
+        <Route path="/:page?" component={App} />
       </div>
     </Router>
   </Provider>
