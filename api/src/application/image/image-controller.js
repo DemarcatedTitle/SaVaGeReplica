@@ -54,6 +54,22 @@ module.exports = {
       });
     });
   },
+  getUploaded: (request, h, err) => {
+    const uploadID = request.params.uploadID;
+    return new Promise(function(resolve) {
+      if (err) {
+        throw err;
+      }
+      const yoursvg = imageDB.getImage(uploadID);
+      yoursvg.then(thesvg => {
+        console.trace();
+        console.log(thesvg[0].image);
+        const response = h.response(thesvg[0].image);
+        response.type('image/svg+xml');
+        resolve(h.response(response));
+      });
+    });
+  },
   getAll: (request, h, err) => {
     return new Promise(function(resolve) {
       imageDB

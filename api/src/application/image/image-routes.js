@@ -12,7 +12,16 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/image/all',
+    path: '/api/image/uploaded/{uploadID}',
+    handler: imagecontroller.getUploaded,
+    // config: {
+    //   tags: ['api'],
+    //   description: 'An example endpoint using a controller',
+    // },
+  },
+  {
+    method: 'GET',
+    path: '/api/image/all',
     handler: imagecontroller.getAll,
     // config: {
     //   tags: ['api'],
