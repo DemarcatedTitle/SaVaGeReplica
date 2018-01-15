@@ -1,10 +1,19 @@
-// const Joi = require('joi');
+const Joi = require('joi');
 const imagecontroller = require('./image-controller.js');
 module.exports = [
   {
     method: 'GET',
     path: '/image/{uploadID}',
     handler: imagecontroller.get,
+    // config: {
+    //   tags: ['api'],
+    //   description: 'An example endpoint using a controller',
+    // },
+  },
+  {
+    method: 'GET',
+    path: '/image/all',
+    handler: imagecontroller.getAll,
     // config: {
     //   tags: ['api'],
     //   description: 'An example endpoint using a controller',
@@ -32,20 +41,20 @@ module.exports = [
       payload: {
         maxBytes: 11457280,
       },
-      // validate: {
-      //   payload: {
-      //     outputfilename: Joi.string(),
-      //     numofshapes: Joi.number().integer(),
-      //     mode: Joi.number().integer(),
-      //     rep: Joi.number().integer(),
-      //     nth: Joi.number().integer(),
-      //     outputsize: Joi.number().integer(),
-      //     alpha: Joi.number().integer(),
-      //     backgroundcolor: Joi.number().integer(),
-      //     file: Joi.binary(),
-      //     filename: Joi.string(),
-      //   },
-      // },
+      validate: {
+        payload: {
+          outputfilename: Joi.string(),
+          numofshapes: Joi.number().integer(),
+          mode: Joi.number().integer(),
+          rep: Joi.number().integer(),
+          nth: Joi.number().integer(),
+          outputsize: Joi.number().integer(),
+          alpha: Joi.number().integer(),
+          backgroundcolor: Joi.number().integer(),
+          file: Joi.binary(),
+          filename: Joi.string(),
+        },
+      },
     },
     handler: imagecontroller.uploadImage,
   },

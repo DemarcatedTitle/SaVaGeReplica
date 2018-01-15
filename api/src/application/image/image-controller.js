@@ -54,6 +54,16 @@ module.exports = {
       });
     });
   },
+  getAll: (request, h, err) => {
+    return new Promise(function(resolve) {
+      imageDB
+        .getAllImages()
+        .then(allImages => {
+          resolve(h.response(allImages));
+        })
+        .catch(err => console.log(err));
+    });
+  },
   uploadImage: function(request, h, err) {
     return new Promise(function(resolve) {
       if (err) {
@@ -66,6 +76,7 @@ module.exports = {
       defaults.rep = 0;
       defaults.nth = 0;
       defaults.mode = 1;
+      defaults.name = 'Your Picture';
       fs.writeFile('./images/' + imageID, request.payload.file, err => {
         if (err) throw err;
         console.log('The file has been saved!');
@@ -89,9 +100,18 @@ module.exports = {
             return defaults.mode;
           }
         }
+        function outputName(name) {
+          if (request.payload.outputfilename) {
+            return request.payload.outputfilename;
+          } else {
+            return defaults.name;
+          }
+        }
         const shapes = numShapes(request.payload.numofshapes);
         // console.log(typeof shapes);
-        const command = `primitive -i ./images/${imageID} -n ${shapes} -m 2 -v -o ./images/${imageID}.svg`;
+        const command = `primitive -i ./images/${imageID} -n ${shapes} -m ${mode(
+          request.payload.mode
+        )} -v -o ./images/${imageID}.svg`;
         console.log(command);
         //
         // Generate a uuid, reply with that uuid
@@ -117,7 +137,7 @@ module.exports = {
             // return response;
             const dbImageShape = {
               image: yoursvg,
-              name: 'placeholder',
+              name: outputName(request.payload.outputfilename),
               image_id: imageID,
             };
             imageDB.addImage(dbImageShape);
