@@ -76,3 +76,25 @@ form {
   justify-content: center;
   display: flex;
 }
+.tooltip {
+  height: 1em;
+  width: 1em;
+  justify-content:center;
+  veritcal-align: bottom;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+.tooltip div {
+  color: white;
+  border-radius: 100%;
+  background-color: orange;
+  text-align: center;
+
+}
+.SavageGallery {
+  display: flex;
+  justify-content: center;
+  width: 66%;
+}
