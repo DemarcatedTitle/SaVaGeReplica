@@ -22,6 +22,8 @@ exports.start = function start() {
 };
 exports.addImage = function addImage(imageObject) {
   const { image_id, image, name } = imageObject;
+  imageObject.created_at = knex.fn.now();
+  imageObject.updated_at = knex.fn.now();
   return knex('svg_images')
     .insert(imageObject)
     .then(results => {})
@@ -36,4 +38,8 @@ exports.getImage = function getImage(imageID) {
     .where('image_id', '=', imageID);
   console.log('\n\n' + getQuery.toString() + '\n\n');
   return getQuery;
+};
+exports.getAllImages = function getAllImages() {
+  var getAll = knex.select().from('svg_images');
+  return getAll;
 };
