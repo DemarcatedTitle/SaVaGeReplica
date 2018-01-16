@@ -9,31 +9,12 @@ export default class SavageGallery extends React.PureComponent {
   }
   componentDidMount() {
     this.props.fetchAllImages();
-    // return fetch('/api/image/all', {
-    //   method: 'GET',
-    //   credentials: 'same-origin',
-    // })
-    //   .then(response => {
-    //     if (response.status === 200) {
-    //       response.json().then(data => {
-    //         return this.setState({ gallery: data });
-    //         // const imgurl = URL.createObjectURL(data);
-    //       });
-    //     } else {
-    //       console.log(response);
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.error(error);
-    //   });
   }
 
   render() {
-    console.log(this.props.images);
     const tilesData = [{ img: test, title: 'Test!', author: 'me!' }];
     const image1 = this.state.gallery[0] ? this.state.gallery[0].image_id : '';
     const test = `${window.location.host}/api/images/uploaded/${image1}`;
-    console.log(test);
     return (
       <div className="SavageGallery">
         Savage Gallery!

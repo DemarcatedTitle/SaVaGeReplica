@@ -1,5 +1,5 @@
 const allImages = (
-  state = [{ isFetching: false, IDS: [], imageLocations: [] }],
+  state = [{ isFetching: false, IDS: [], imageLocations: [], downloaded: [] }],
   action
 ) => {
   let newState = Object.assign({}, state.slice(-1)[0]);
@@ -8,11 +8,16 @@ const allImages = (
       newState['isFetching'] = true;
       return [...state, newState];
     case 'FETCHALLIMAGES_IDS_ACQUIRED':
-      newState['IDS'] = action.payload;
+      newState['FETCH_QUEUE'] = action.payload;
       return [...state, newState];
     case 'IMAGE_REQUEST_SUCCESSFUL':
-      newState['imageLocations'] = newState['imageLocations'].concat([
-        action.payload,
+      if (!newState['imageLocations'].includes(action.payload)) {
+        newState['imageLocations'] = newState['imageLocations'].concat([
+          action.payload.imageLocation,
+        ]);
+      }
+      newState['downloaded'] = newState['downloaded'].concat([
+        action.payload.id,
       ]);
       return [...state, newState];
     default:

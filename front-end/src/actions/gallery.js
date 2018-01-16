@@ -1,3 +1,4 @@
+import { store } from '../index';
 export const fetchAllImages = function fetchAllImages() {
   return function(dispatch) {
     dispatch({ type: 'FETCHALLIMAGES_STARTED' });
@@ -7,9 +8,15 @@ export const fetchAllImages = function fetchAllImages() {
     })
       .then(id => {
         if (id.status === 200) {
-          id.json().then(data => {
-            dispatch({ type: 'FETCHALLIMAGES_IDS_ACQUIRED', payload: data });
-            data.forEach(function(id) {
+          id.json().then(ids => {
+            dispatch({ type: 'FETCHALLIMAGES_IDS_ACQUIRED', payload: ids });
+            const idsToFetch = ids.filter(id => {
+              return !store
+                .getState()
+                .allImages.slice(-1)[0]
+                .downloaded.includes(id.image_id);
+            });
+            idsToFetch.forEach(function(id) {
               dispatch({ type: 'IMAGE_REQUEST_STARTED' });
               fetch('/api/image/uploaded/' + id.image_id, {
                 method: 'GET',
@@ -22,7 +29,10 @@ export const fetchAllImages = function fetchAllImages() {
                       const imageLocation = URL.createObjectURL(image);
                       dispatch({
                         type: 'IMAGE_REQUEST_SUCCESSFUL',
-                        payload: imageLocation,
+                        payload: {
+                          imageLocation: imageLocation,
+                          id: id.image_id,
+                        },
                       });
                     })
                     .catch(err => {
