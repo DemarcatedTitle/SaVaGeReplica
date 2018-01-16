@@ -13,7 +13,11 @@ const allImages = (
     case 'IMAGE_REQUEST_SUCCESSFUL':
       if (!newState['imageLocations'].includes(action.payload)) {
         newState['imageLocations'] = newState['imageLocations'].concat([
-          action.payload.imageLocation,
+          {
+            image_location: action.payload.imageLocation,
+            id: action.payload.id,
+            name: action.payload.name,
+          },
         ]);
       }
       newState['downloaded'] = newState['downloaded'].concat([

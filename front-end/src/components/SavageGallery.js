@@ -22,8 +22,8 @@ export default class SavageGallery extends React.PureComponent {
         <GridList cols={3} cellHeight={360}>
           <Subheader>December</Subheader>
           {this.props.images.map(tile => (
-            <GridTile key={tile}>
-              <img src={tile} />
+            <GridTile key={tile.id} title={tile.name}>
+              <img src={tile.image_location} />
             </GridTile>
           ))}
         </GridList>

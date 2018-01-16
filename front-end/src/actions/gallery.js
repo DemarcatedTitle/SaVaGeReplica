@@ -16,22 +16,23 @@ export const fetchAllImages = function fetchAllImages() {
                 .allImages.slice(-1)[0]
                 .downloaded.includes(id.image_id);
             });
-            idsToFetch.forEach(function(id) {
+            idsToFetch.forEach(function(image) {
               dispatch({ type: 'IMAGE_REQUEST_STARTED' });
-              fetch('/api/image/uploaded/' + id.image_id, {
+              fetch('/api/image/uploaded/' + image.image_id, {
                 method: 'GET',
                 credentials: 'same-origin',
               })
                 .then(response =>
                   response
                     .blob()
-                    .then(image => {
-                      const imageLocation = URL.createObjectURL(image);
+                    .then(imageBlob => {
+                      const imageLocation = URL.createObjectURL(imageBlob);
                       dispatch({
                         type: 'IMAGE_REQUEST_SUCCESSFUL',
                         payload: {
                           imageLocation: imageLocation,
-                          id: id.image_id,
+                          name: image.name,
+                          id: image.image_id,
                         },
                       });
                     })

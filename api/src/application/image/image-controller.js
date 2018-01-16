@@ -60,8 +60,6 @@ module.exports = {
       }
       const yoursvg = imageDB.getImage(uploadID);
       yoursvg.then(thesvg => {
-        console.trace();
-        console.log(thesvg[0].image);
         const response = h.response(thesvg[0].image);
         response.type('image/svg+xml');
         resolve(h.response(response));
@@ -73,6 +71,7 @@ module.exports = {
       imageDB
         .getAllImages()
         .then(allImages => {
+          console.log(allImages);
           resolve(h.response(allImages));
         })
         .catch(err => console.log(err));
@@ -84,7 +83,6 @@ module.exports = {
         throw err;
       }
       const imageID = uuidv4();
-      console.log(`imageID is: \n\n${imageID}\n\n`);
       let defaults = {};
       defaults.numofshapes = 2;
       defaults.rep = 0;

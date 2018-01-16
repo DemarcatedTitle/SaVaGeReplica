@@ -5,7 +5,7 @@ exports.start = function start() {
   return knex('svg_images')
     .select()
     .limit(1)
-    .then(image => console.log(image))
+    .then(image => console.log('Image successfully found'))
     .catch(err => {
       // 42P01 means does not exist
       if (err.code === '42P01') {
@@ -40,6 +40,6 @@ exports.getImage = function getImage(imageID) {
   return getQuery;
 };
 exports.getAllImages = function getAllImages() {
-  var getAll = knex.select('image_id').from('svg_images');
+  var getAll = knex.select('image_id', 'name').from('svg_images');
   return getAll;
 };
