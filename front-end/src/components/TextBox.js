@@ -22,6 +22,7 @@ export default class TextBox extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.state = {
+      mode: 1,
       open: false,
       repDialog: false,
       value: 1,
@@ -38,9 +39,9 @@ export default class TextBox extends React.Component {
   handleTyping(event) {
     this.props.onTextTyped({ id: event.target.id, value: event.target.value });
   }
-  handleChange(event) {
-    let newObj = {};
-    newObj[event.target.id] = event.target.value;
+  handleChange(item, key) {
+    const newObj = {};
+    newObj[item] = key;
     this.setState(newObj);
   }
   handleSubmit(event) {
@@ -55,6 +56,7 @@ export default class TextBox extends React.Component {
         data.append(field[1].id, field[1].value);
       }
     });
+    data.append('mode', this.state.mode);
     data.append('file', this.state.accepted[0]);
     data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);
@@ -114,8 +116,10 @@ export default class TextBox extends React.Component {
               </div>
               <div className="formElement">
                 <SelectField
-                  value={this.state.value}
-                  onChange={this.handleChange}
+                  value={this.state.mode}
+                  onChange={(value, key) => {
+                    this.handleChange('mode', key);
+                  }}
                   floatingLabelText="Mode"
                 >
                   <MenuItem value={0} primaryText="Combo" />
