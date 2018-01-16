@@ -34,8 +34,6 @@ module.exports = {
             console.log(uploadID);
             const yoursvg = imageDB.getImage(uploadID);
             yoursvg.then(thesvg => {
-              console.trace();
-              console.log(thesvg[0].image);
               if (thesvg == []) {
                 resolve(h.response({ progress: percent.toString() }));
               } else {
@@ -107,8 +105,9 @@ module.exports = {
           }
         }
         function mode(mode) {
+          console.log(mode);
           if (
-            typeof request.payload.mode === 'integer' &&
+            typeof parseInt(request.payload.mode) === 'number' &&
             request.payload.mode < 9
           ) {
             return request.payload.mode;
