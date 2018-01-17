@@ -33,7 +33,9 @@ class App extends React.Component {
     // &redirect_uri=${config.redirectUri}
     // &nonce=nonce
     const loginLink = `http://localhost.test:7000/op/auth?client_id=client_id&response_type=code&scope=openid&redirect_uri=http://localhost:3000&nonce=1531abc`;
-    const page = this.props.match.params.page;
+    const page = this.props.match.params.page
+      ? this.props.match.params.page
+      : 'replicator';
     const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
     console.log(pageTitle);
     const validRoutes = ['replicator', 'gallery'];

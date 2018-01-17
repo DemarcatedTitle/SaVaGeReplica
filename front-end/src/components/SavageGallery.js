@@ -12,15 +12,9 @@ export default class SavageGallery extends React.PureComponent {
   }
 
   render() {
-    const tilesData = [{ img: test, title: 'Test!', author: 'me!' }];
-    const image1 = this.state.gallery[0] ? this.state.gallery[0].image_id : '';
-    const test = `${window.location.host}/api/images/uploaded/${image1}`;
     return (
       <div className="SavageGallery">
-        Savage Gallery!
-        {image1}
         <GridList cols={3} cellHeight={360}>
-          <Subheader>December</Subheader>
           {this.props.images.map(tile => (
             <GridTile key={tile.id} title={tile.name}>
               <img src={tile.image_location} />
