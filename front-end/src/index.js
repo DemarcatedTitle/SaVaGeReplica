@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import AppContainer from './containers/AppContainer';
 import registerServiceWorker from './registerServiceWorker';
-import { Provider } from 'react-redux';
 import { compose, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import TextApp from './reducers/index.js';

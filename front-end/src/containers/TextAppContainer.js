@@ -22,7 +22,6 @@ const mapStateToProps = state => {
   const imgurl = state.progress.slice(-1)[0]
     ? state.progress.slice(-1)[0].imgurl
     : '';
-  console.log(state);
 
   return {
     text: text,

@@ -6,8 +6,6 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import IconButton from 'material-ui/IconButton';
 import ResultCard from './ResultCard';
 import LinearProgress from 'material-ui/LinearProgress';
 

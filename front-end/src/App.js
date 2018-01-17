@@ -4,13 +4,9 @@ import './App.css';
 import AppBar from 'material-ui/AppBar';
 import TextAppContainer from './containers/TextAppContainer.js';
 import GalleryContainer from './containers/GalleryContainer.js';
-import SavageGallery from './components/SavageGallery';
 import Drawer from 'material-ui/Drawer';
 import { NavLink } from 'react-router-dom';
 import MenuItem from 'material-ui/MenuItem';
-import createHistory from 'history/createBrowserHistory';
-const history = createHistory();
-const location = history.location;
 
 class App extends React.Component {
   constructor(props) {
@@ -32,12 +28,10 @@ class App extends React.Component {
     // &scope=${scope}
     // &redirect_uri=${config.redirectUri}
     // &nonce=nonce
-    const loginLink = `http://localhost.test:7000/op/auth?client_id=client_id&response_type=code&scope=openid&redirect_uri=http://localhost:3000&nonce=1531abc`;
     const page = this.props.match.params.page
       ? this.props.match.params.page
       : 'replicator';
     const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
-    console.log(pageTitle);
     const validRoutes = ['replicator', 'gallery'];
 
     return (
