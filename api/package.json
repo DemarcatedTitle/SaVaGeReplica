@@ -22,6 +22,7 @@
   "homepage": "",
   "dependencies": {
     "hapi": "^17.2.0",
+    "inert": "^5.1.0",
     "knex": "^0.14.2",
     "pg": "^7.4.1",
     "redis": "^2.8.0",
