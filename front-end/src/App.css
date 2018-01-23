@@ -98,3 +98,44 @@ form {
   justify-content: center;
   width: 66%;
 }
+
+.section {
+  animation-duration: .3s;
+  animation-iteration-count: infinite;
+  animation-name: slidein;
+}
+
+/* @keyframes slidein { */
+/*   from { */
+/*     margin-left: 100%; */
+/*     width: 300%; */
+/*   } */
+
+/*   to { */
+/*     margin-left: 0%; */
+/*     width: 100%; */
+/*   } */
+/* } */
+.dialogimage {
+}
+.gallerydialog {
+  width: fit-content;
+}
+.backdrop {
+  overflow: hidden;
+  height: 500px;
+  width: 1024px;
+}
+.projection {
+  width: 2048px;
+  height: 636px;
+  animation: slide .8s steps(2) infinite;
+}
+@keyframes slide {
+  0%{
+    transform: translate3d(0,0,0);
+  }
+  100%{
+    transform: translate3d(-100%,0,0);
+  }
+}

@@ -8,6 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import ResultCard from './ResultCard';
 import LinearProgress from 'material-ui/LinearProgress';
+import image from '../workingexample.svg';
 
 /* eslint-disable no-console */
 export default class TextBox extends React.Component {
@@ -63,6 +64,14 @@ export default class TextBox extends React.Component {
     const actions = [
       <RaisedButton label="Cancel" primary={true} onClick={this.handleClose} />,
     ];
+    return (
+      <div>
+        Hi
+        <div className="backdrop">
+          <div style={{ background: `url(${image})` }} className="projection" />
+        </div>
+      </div>
+    );
     return (
       <div className="mainContainer">
         <Paper className="upload paper section">
