@@ -36,8 +36,14 @@
 }
 .mainContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-evenly;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: row;
+  height: 30vh;
 }
 
 .paper {
@@ -47,8 +53,12 @@
 .section {
   flex-grow: 1;
   display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .controls {
+  flex-direction: row;
   flex-grow: .5;
 }
 .upload div {
@@ -121,21 +131,22 @@ form {
 .gallerydialog {
   width: fit-content;
 }
-.backdrop {
-  overflow: hidden;
-  height: 500px;
-  width: 1024px;
+
+.animator {
+  display: flex;
+  flex-direction: row;
 }
-.projection {
-  width: 2048px;
-  height: 636px;
-  animation: slide .8s steps(2) infinite;
+
+.closeX {
+  align-self: right;
 }
-@keyframes slide {
-  0%{
-    transform: translate3d(0,0,0);
-  }
-  100%{
-    transform: translate3d(-100%,0,0);
-  }
+.fontButton {
+  border: 1px solid black;
+  background-color: green;
+}
+.horizontal {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
 }
