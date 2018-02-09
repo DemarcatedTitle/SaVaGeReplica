@@ -28,29 +28,29 @@ services:
       - ./common.env
     volumes:
       - .:/src
-    # depends_on:
-    #   - postgres
+    depends_on:
+      - postgres
     #   - migrate-seed
     # entrypoint: ./wait-for-it.sh -t 0 postgres:5432 --
     command: ["yarn", "start"]
-  # postgres:
-  #   image: postgres:10-alpine
-  #   env_file:
-  #     - ./common.env
+  postgres:
+    image: postgres:10-alpine
+    env_file:
+      - ./common.env
   redis:
     image: redis:4-alpine
   # migrate-seed:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.node
-    #   args:
-    #     PACKAGE_PATH: ./api
-    #     WORKING_DIR: /src/api
-    # env_file:
-    #   - ./common.env
-    # volumes:
-    #   - .:/src
-    # depends_on:
-    #   - postgres
-    # entrypoint: ./wait-for-it.sh -t 0 postgres:5432 --
-    # command: ["npm", "run", "migrate-seed"]
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.node
+  #     args:
+  #       PACKAGE_PATH: ./api
+  #       WORKING_DIR: /src/api
+  #   env_file:
+  #     - ./common.env
+  #   volumes:
+  #     - .:/src
+  #   depends_on:
+  #     - postgres
+  #   entrypoint: ./wait-for-it.sh -t 0 postgres:5432 --
+  #   command: ["npm", "run", "migrate-seed"]

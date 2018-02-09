@@ -13,9 +13,9 @@ services:
       - "9000:9000"
      environment:
       - APP_ENV=development
-  # postgres:
-  #   ports:
-  #     - "5432:5432"
+  postgres:
+    ports:
+      - "5432:5432"
   # oidc:
   #   ports:
   #     - "7000:9000"
