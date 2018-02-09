@@ -4,6 +4,7 @@ import './App.css';
 import AppBar from 'material-ui/AppBar';
 import TextAppContainer from './containers/TextAppContainer.js';
 import GalleryContainer from './containers/GalleryContainer.js';
+import AnimatorContainer from './containers/AnimatorContainer.js';
 import Drawer from 'material-ui/Drawer';
 import { NavLink } from 'react-router-dom';
 import MenuItem from 'material-ui/MenuItem';
@@ -32,7 +33,7 @@ class App extends React.Component {
       ? this.props.match.params.page
       : 'replicator';
     const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
-    const validRoutes = ['replicator', 'gallery'];
+    const validRoutes = ['replicator', 'gallery', 'animator'];
 
     return (
       <div className="App">
@@ -61,9 +62,15 @@ class App extends React.Component {
               Gallery{' '}
             </MenuItem>
           </NavLink>
+          <NavLink to="/animator">
+            <MenuItem checked={page === 'animator'} onClick={this.handleClose}>
+              Animator
+            </MenuItem>
+          </NavLink>
         </Drawer>
         {page === 'replicator' ? <TextAppContainer /> : ''}
         {page === 'gallery' ? <GalleryContainer /> : ''}
+        {page === 'animator' ? <AnimatorContainer /> : ''}
         {!validRoutes.includes(page) ? 'Page not found' : ''}
       </div>
     );
