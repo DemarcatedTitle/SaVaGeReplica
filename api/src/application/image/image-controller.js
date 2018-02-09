@@ -141,7 +141,7 @@ module.exports = {
             request.payload.rep
           )} -m ${mode(
             request.payload.mode
-          )} -v -bg ff5733 -o ./src/application/image/images/${imageID}.svg`;
+          )} -v -o ./src/application/image/images/${imageID}.svg`;
           console.log(command);
           //
           // Generate a uuid, reply with that uuid
