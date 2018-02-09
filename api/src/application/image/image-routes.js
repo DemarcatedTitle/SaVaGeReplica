@@ -67,6 +67,46 @@ module.exports = [
     },
     handler: imagecontroller.uploadImage,
   },
+  {
+    method: 'POST',
+    path: '/api/animator/create',
+    config: {
+      tags: ['api'],
+      description: 'Image upload route for animation',
+      payload: {
+        maxBytes: 11457280,
+      },
+      validate: {
+        payload: Joi.array().items(
+          Joi.string(),
+          Joi.binary(),
+          Joi.object({
+            frame: Joi.number().integer(),
+            numofshapes: Joi.number().integer(),
+            mode: Joi.number().integer(),
+            rep: Joi.number().integer(),
+            nth: Joi.number().integer(),
+            outputsize: Joi.number().integer(),
+            alpha: Joi.number().integer(),
+            backgroundcolor: Joi.number().integer(),
+          })
+        ),
+        // {
+        //   outputfilename: Joi.string(),
+        //   numofshapes: Joi.number().integer(),
+        //   mode: Joi.number().integer(),
+        //   rep: Joi.number().integer(),
+        //   nth: Joi.number().integer(),
+        //   outputsize: Joi.number().integer(),
+        //   alpha: Joi.number().integer(),
+        //   backgroundcolor: Joi.number().integer(),
+        //   file: Joi.binary(),
+        //   filename: Joi.string(),
+        // },
+      },
+    },
+    handler: imagecontroller.uploadImage,
+  },
   // {
   //   method: 'GET',
   //   path: '/async-validation-example',
