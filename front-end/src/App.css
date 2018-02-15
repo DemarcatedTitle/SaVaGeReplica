@@ -111,21 +111,9 @@ form {
 
 .section {
   animation-duration: .3s;
-  animation-iteration-count: infinite;
   animation-name: slidein;
 }
 
-/* @keyframes slidein { */
-/*   from { */
-/*     margin-left: 100%; */
-/*     width: 300%; */
-/*   } */
-
-/*   to { */
-/*     margin-left: 0%; */
-/*     width: 100%; */
-/*   } */
-/* } */
 .dialogimage {
 }
 .gallerydialog {
@@ -149,4 +137,21 @@ form {
   flex-direction: row;
   align-content: center;
   align-items: center;
+}
+
+.configurator {
+  animation-duration: .3s;
+  animation-iteration-count: 1;
+  animation-name: slidein;
+}
+@keyframes slidein {
+  from {
+    /* margin-left: 100%; */
+    transform: translate(100vw); 
+  }
+
+  to {
+    /* margin-left: 0%; */
+    transform: translate(0px); 
+  }
 }
