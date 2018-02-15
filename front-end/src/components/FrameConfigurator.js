@@ -9,6 +9,7 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import ResultCard from './ResultCard';
 import LinearProgress from 'material-ui/LinearProgress';
+const uuid = require('uuid/v4');
 // import image from '../sprite.css-4272fb9d.svg';
 export default class FrameConfigurator extends React.Component {
   constructor(props) {
@@ -35,13 +36,15 @@ export default class FrameConfigurator extends React.Component {
   handleOpen() {
     this.setState({ repDialog: true });
   }
-  handleTyping(event) {
-    this.props.frameNumberChanged({
-      id: event.target.id,
+  handleTyping(event, target) {
+    this.props.valueChanged({
+      frameNumber: this.props.frameNumber,
+      target: target,
       value: event.target.value,
     });
   }
   handleChange(item, key) {
+    console.log(item);
     const newObj = {};
     newObj[item] = key;
     this.setState(newObj);
@@ -76,14 +79,13 @@ export default class FrameConfigurator extends React.Component {
     };
 
     return (
-      <div className="">
+      <div className="configurator">
         <form onSubmit={this.handleSubmit}>
           <div className="closeX">X</div>
           Frame #
           <div className="formElement">
             <TextField
-              id="numofshapes"
-              onChange={this.handleTyping}
+              onChange={event => this.handleTyping(event, 'numberOfShapes')}
               hintText="Number of Shapes"
             />
           </div>

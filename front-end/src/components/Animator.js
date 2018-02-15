@@ -42,11 +42,12 @@ export default class Animator extends React.Component {
   handleTyping(event) {
     this.props.frameNumberChange({
       id: event.target.id,
+      target: '',
       value: event.target.value,
     });
   }
   increment() {
-    this.props.frameNumberChange({
+    this.props.valueChanged({
       value: this.props.animator.size + 1,
     });
   }
@@ -84,7 +85,7 @@ export default class Animator extends React.Component {
     //   width: 3 * width + 'px',
     // };
 
-    console.log(Array.from(this.props.frames));
+    // console.log(Array.from(this.props.frames));
     const frameArr = Array.from(this.props.frames);
     return (
       <div className="mainContainer">
@@ -182,28 +183,25 @@ export default class Animator extends React.Component {
           </div>
         </div>
         <div className="controls section">
-          <Paper className="paper animator">
-            <FrameConfigurator
-              frameNumberChange={this.props.frameNumberChange}
-            />
-            <RaisedButton
-              onClick={this.uploadImage}
-              label="Start Process"
-              primary={true}
-            />
+          <Paper className="animator">
+            <div className="controls section configurator">
+              {frameArr.map(frame => {
+                return (
+                  <FrameConfigurator
+                    key={frame[1].get('key')}
+                    frameNumber={frame[0]}
+                    frameNumberChange={this.props.frameNumberChange}
+                    valueChanged={this.props.valueChanged}
+                  />
+                );
+              })}
+            </div>
           </Paper>
-          <div className="controls section">
-            {frameArr.map((frame, index) => {
-              return (
-                <div>
-                  Number of shapes:
-                  <div key={index + frame[0]}>
-                    {frame[1].get('numberOfShapes')}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <RaisedButton
+            onClick={this.uploadImage}
+            label="Start Process"
+            primary={true}
+          />
         </div>
       </div>
     );

@@ -3,6 +3,7 @@ import {
   isTyping,
   INCREMENT_FRAME_NUMBER,
   DECREMENT_FRAME_NUMBER,
+  VALUE_CHANGED,
 } from '../actions/animator';
 import { fetchProgress } from '../actions/progress';
 import { uploadImage } from '../actions/uploadImage';
@@ -50,6 +51,7 @@ const mapDispatchToProps = dispatch => {
     },
     incrementFrameNumber: () => dispatch(INCREMENT_FRAME_NUMBER),
     decrementFrameNumber: () => dispatch(DECREMENT_FRAME_NUMBER),
+    valueChanged: value => dispatch(VALUE_CHANGED(value)),
     // onSubmit: loading => {
     //   dispatch(isLoading(loading));
     // },
