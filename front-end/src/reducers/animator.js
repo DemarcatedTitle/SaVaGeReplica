@@ -1,3 +1,4 @@
+const uuid = require('uuid/v4');
 function newFrame() {
   return new Map([
     ['numberOfShapes', ''],
@@ -6,6 +7,7 @@ function newFrame() {
     ['nth', ''],
     ['alpha', ''],
     ['backgroundcolor', ''],
+    ['key', uuid()],
   ]);
 }
 function increaseFrames(currentFrameMap, currentFrameNumber, newFrameNumber) {
@@ -22,7 +24,10 @@ function removeFrames(currentFrameMap, currentFrameNumber, newFrameNumber) {
   const numFramesToRemove = currentFrameNumber - newFrameNumber;
   return new Map(Array.from(currentFrameMap).slice(0, -numFramesToRemove));
 }
-const animator = (state = [new Map([[0, newFrame()]])], action) => {
+const animator = (
+  state = [new Map([[0, newFrame()], [1, newFrame()]])],
+  action
+) => {
   const newState = new Map(state.slice(-1)[0]);
   const prevState = state.slice(-1)[0];
 
@@ -53,6 +58,13 @@ const animator = (state = [new Map([[0, newFrame()]])], action) => {
         prevState.delete(prevState.size - 1);
       }
       return [...state, prevState];
+    case 'VALUE_CHANGED':
+      const frameNumber = action.value.frameNumber;
+      const prevFrame = newState.get(frameNumber);
+      prevFrame.set(action.value.target, action.value.value);
+      console.log(prevState);
+      console.log(action.value);
+      return [...state, newState];
 
     default:
       console.log('DEFAULT');
