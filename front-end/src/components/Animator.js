@@ -116,12 +116,8 @@ export default class Animator extends React.Component {
               >
                 -
               </div>
-              <TextField
-                id="numFrames"
-                disabled={true}
-                value={this.props.frames.size}
-                floatingLabelText="Number of Frames"
-              />
+              Number of frames:
+              {this.props.frames.size}
               <div
                 className="fontButton"
                 onClick={this.props.incrementFrameNumber}
