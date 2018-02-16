@@ -43,11 +43,12 @@ export default class FrameConfigurator extends React.Component {
       value: event.target.value,
     });
   }
-  handleChange(item, key) {
-    console.log(item);
-    const newObj = {};
-    newObj[item] = key;
-    this.setState(newObj);
+  handleChange(value, target) {
+    this.props.valueChanged({
+      frameNumber: this.props.frameNumber,
+      target: target,
+      value: value,
+    });
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -82,7 +83,7 @@ export default class FrameConfigurator extends React.Component {
       <div className="configurator">
         <form onSubmit={this.handleSubmit}>
           <div className="closeX">X</div>
-          Frame #
+          Frame {this.props.frameNumber + 1}
           <div className="formElement">
             <TextField
               onChange={event => this.handleTyping(event, 'numberOfShapes')}
@@ -92,8 +93,8 @@ export default class FrameConfigurator extends React.Component {
           <div className="formElement">
             <SelectField
               value={this.state.mode}
-              onChange={(value, key) => {
-                this.handleChange('mode', key);
+              onChange={(event, key, payload) => {
+                this.handleChange(payload, 'mode');
               }}
               floatingLabelText="Mode"
             >
@@ -109,7 +110,11 @@ export default class FrameConfigurator extends React.Component {
             </SelectField>
           </div>
           <div className="formElement">
-            <TextField id="rep" onChange={this.handleTyping} hintText="Rep" />
+            <TextField
+              id="rep"
+              onChange={event => this.handleTyping(event, 'rep')}
+              hintText="Rep"
+            />
             <Dialog
               title="Rep"
               actions={actions}
@@ -125,7 +130,11 @@ export default class FrameConfigurator extends React.Component {
             </div>
           </div>
           <div className="formElement">
-            <TextField id="nth" onChange={this.handleTyping} hintText="Nth" />
+            <TextField
+              id="nth"
+              onChange={event => this.handleTyping(event, 'nth')}
+              hintText="Nth"
+            />
             <Dialog
               title="Test"
               actions={actions}
@@ -142,14 +151,14 @@ export default class FrameConfigurator extends React.Component {
           <div className="formElement">
             <TextField
               id="alpha"
-              onChange={this.handleTyping}
+              onChange={event => this.handleTyping(event, 'alpha')}
               hintText="Alpha"
             />
           </div>
           <div className="formElement">
             #<TextField
               id="backgroundcolor"
-              onChange={this.handleTyping}
+              onChange={event => this.handleTyping(event, 'backgroundcolor')}
               hintText="Background Color"
             />
           </div>
