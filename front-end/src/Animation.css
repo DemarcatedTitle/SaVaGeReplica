@@ -1,0 +1,16 @@
+
+.backdrop {
+  overflow: hidden;
+  width: 1600px;
+}
+.animationbox {
+  /* Width must be the number of frames multiplied by the width of the backdrop. */
+  width: 4800px;
+  /* Steps must be equal to the number of frames */
+  animation: slide 5s steps(3) infinite;
+}
+@keyframes slide {
+  100%{
+    transform: translate3d(-100%,0,0);
+  }
+}
