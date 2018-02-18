@@ -4,7 +4,7 @@ import SavageGallery from '../components/SavageGallery';
 
 const mapStateToProps = state => {
   const currentState = state.allImages.slice(-1)[0];
-  const images = currentState.imageLocations;
+  const images = currentState.imageLocations.concat(['animation']);
   return { images: images };
 };
 const mapDispatchToProps = dispatch => {
