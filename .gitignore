@@ -60,4 +60,4 @@ typings/
 .env
 
 # SVG images
-.svg
+*.svg
