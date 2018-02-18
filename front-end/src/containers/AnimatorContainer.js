@@ -6,11 +6,14 @@ import {
   VALUE_CHANGED,
 } from '../actions/animator';
 import { fetchProgress } from '../actions/progress';
-import { uploadImage } from '../actions/uploadImage';
+import {
+  uploadImageToAnimate,
+  animationInformationChange,
+} from '../actions/animator';
 import Animator from '../components/Animator.js';
 
 const mapStateToProps = state => {
-  console.log(state.animator.slice(-1)[0]);
+  console.log(state);
   const text = state.textApp.slice(-1)[0] ? state.textApp.slice(-1)[0] : {};
   const resultImage = state.resultImage.slice(-1)[0]
     ? state.resultImage.slice(-1)[0]
@@ -31,6 +34,7 @@ const mapStateToProps = state => {
   const animator = state.animator.slice(-1)[0]
     ? state.animator.slice(-1)[0]
     : '';
+  const animationInformation = state.animationInformation.slice(-1)[0];
 
   return {
     animator: animator,
@@ -41,6 +45,7 @@ const mapStateToProps = state => {
     progress: progress,
     isFetching: isFetching,
     imgurl: imgurl,
+    animationInformation,
   };
 };
 
@@ -52,11 +57,13 @@ const mapDispatchToProps = dispatch => {
     incrementFrameNumber: () => dispatch(INCREMENT_FRAME_NUMBER),
     decrementFrameNumber: () => dispatch(DECREMENT_FRAME_NUMBER),
     valueChanged: value => dispatch(VALUE_CHANGED(value)),
+    animationInformationChange: value =>
+      dispatch(animationInformationChange(value)),
     // onSubmit: loading => {
     //   dispatch(isLoading(loading));
     // },
     onUpload: payload => {
-      dispatch(uploadImage(payload));
+      dispatch(uploadImageToAnimate(payload));
     },
     fetchProgress: payload => {
       dispatch(fetchProgress(payload));

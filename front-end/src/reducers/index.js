@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import App from './App';
-import animator from './animator';
+import { animator, animationInformation } from './animator';
 import textApp from './textApp';
 import resultImage from './resultImage';
 import progress from './progress';
@@ -12,6 +12,7 @@ const TextApp = combineReducers({
   resultImage,
   progress,
   allImages,
+  animationInformation,
 });
 
 export default TextApp;

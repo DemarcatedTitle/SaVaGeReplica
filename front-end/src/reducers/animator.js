@@ -24,7 +24,7 @@ function removeFrames(currentFrameMap, currentFrameNumber, newFrameNumber) {
   const numFramesToRemove = currentFrameNumber - newFrameNumber;
   return new Map(Array.from(currentFrameMap).slice(0, -numFramesToRemove));
 }
-const animator = (
+export const animator = (
   state = [new Map([[0, newFrame()], [1, newFrame()]])],
   action
 ) => {
@@ -62,14 +62,22 @@ const animator = (
       const frameNumber = action.value.frameNumber;
       const prevFrame = newState.get(frameNumber);
       prevFrame.set(action.value.target, action.value.value);
-      console.log(prevState);
-      console.log(action.value);
       return [...state, newState];
 
     default:
-      console.log('DEFAULT');
       return state;
   }
 };
+export function animationInformation(state = [{}], action) {
+  const newState = state.slice(-1)[0];
+  const prevState = state.slice(-1)[0];
+  switch (action.type) {
+    case 'ANIMATION_INFORMATION_CHANGE':
+      newState[action.payload.id] = action.payload.value;
+      return [...prevState, newState];
+    default:
+      return state;
+  }
+}
 
 export default animator;

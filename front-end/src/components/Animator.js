@@ -29,7 +29,7 @@ export default class Animator extends React.Component {
       open: false,
       repDialog: false,
       value: 1,
-      accepted: [],
+      accepted: [''],
       rejected: [],
     };
   }
@@ -39,10 +39,16 @@ export default class Animator extends React.Component {
   handleOpen() {
     this.setState({ repDialog: true });
   }
-  handleTyping(event) {
+  frameNumberChange(event) {
     this.props.frameNumberChange({
       id: event.target.id,
       target: '',
+      value: event.target.value,
+    });
+  }
+  handleTyping(event) {
+    this.props.animationInformationChange({
+      id: event.target.id,
       value: event.target.value,
     });
   }
@@ -68,7 +74,6 @@ export default class Animator extends React.Component {
         data.append(field[1].id, field[1].value);
       }
     });
-    data.append('mode', this.state.mode);
     data.append('file', this.state.accepted[0]);
     data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);
@@ -175,6 +180,11 @@ export default class Animator extends React.Component {
                   progress={this.props.progress}
                 />
               )}
+              <RaisedButton
+                onClick={this.uploadImage}
+                label="Start Process"
+                primary={true}
+              />
             </Paper>
           </div>
         </div>
@@ -193,11 +203,6 @@ export default class Animator extends React.Component {
               })}
             </div>
           </Paper>
-          <RaisedButton
-            onClick={this.uploadImage}
-            label="Start Process"
-            primary={true}
-          />
         </div>
       </div>
     );
