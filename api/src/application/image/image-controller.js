@@ -200,6 +200,9 @@ module.exports = {
       );
     });
   },
+  animate: async function animate(request, h, err) {
+    console.log('Uploading');
+  },
 };
 
 module.exports['@singleton'] = true;

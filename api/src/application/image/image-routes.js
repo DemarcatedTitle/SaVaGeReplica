@@ -91,21 +91,9 @@ module.exports = [
             backgroundcolor: Joi.number().integer(),
           })
         ),
-        // {
-        //   outputfilename: Joi.string(),
-        //   numofshapes: Joi.number().integer(),
-        //   mode: Joi.number().integer(),
-        //   rep: Joi.number().integer(),
-        //   nth: Joi.number().integer(),
-        //   outputsize: Joi.number().integer(),
-        //   alpha: Joi.number().integer(),
-        //   backgroundcolor: Joi.number().integer(),
-        //   file: Joi.binary(),
-        //   filename: Joi.string(),
-        // },
       },
     },
-    handler: imagecontroller.uploadImage,
+    handler: imagecontroller.animate,
   },
   // {
   //   method: 'GET',
