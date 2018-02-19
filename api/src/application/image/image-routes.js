@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const Boom = require('boom');
 const imagecontroller = require('./image-controller.js');
 module.exports = [
   {
@@ -77,20 +78,46 @@ module.exports = [
         maxBytes: 11457280,
       },
       validate: {
-        payload: Joi.array().items(
-          Joi.string(),
-          Joi.binary(),
-          Joi.object({
-            frame: Joi.number().integer(),
-            numofshapes: Joi.number().integer(),
-            mode: Joi.number().integer(),
-            rep: Joi.number().integer(),
-            nth: Joi.number().integer(),
-            outputsize: Joi.number().integer(),
-            alpha: Joi.number().integer(),
-            backgroundcolor: Joi.number().integer(),
-          })
-        ),
+        failAction: async (request, h, err) => {
+          console.log(request.payload.animationInformation);
+          return new Boom(err);
+        },
+        payload: {
+          animationInformation: Joi.object({
+            filename: Joi.string(),
+            filetype: Joi.number().integer(),
+            resize: Joi.string(),
+            outputsize: Joi.string(),
+          }),
+          animationFrames: Joi.array()
+            .items(
+              Joi.object({
+                frame: Joi.number()
+                  .integer()
+                  .allow(''),
+                numberOfShapes: Joi.number()
+                  .integer()
+                  .allow(''),
+                mode: Joi.number()
+                  .integer()
+                  .allow(''),
+                rep: Joi.number()
+                  .integer()
+                  .allow(''),
+                nth: Joi.number()
+                  .integer()
+                  .allow(''),
+                alpha: Joi.number()
+                  .integer()
+                  .allow(''),
+                backgroundcolor: Joi.number()
+                  .integer()
+                  .allow(''),
+              })
+            )
+            .required(),
+          image: Joi.binary(),
+        },
       },
     },
     handler: imagecontroller.animate,

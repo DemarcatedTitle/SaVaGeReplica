@@ -14,7 +14,6 @@ export const VALUE_CHANGED = value => {
 export const INCREMENT_FRAME_NUMBER = { type: 'INCREMENT_FRAME_NUMBER' };
 export const DECREMENT_FRAME_NUMBER = { type: 'DECREMENT_FRAME_NUMBER' };
 export const uploadImageToAnimate = function uploadImageToAnimate(payload) {
-  console.log(Array.from(payload.entries()));
   return function(dispatch) {
     dispatch({ type: 'UPLOAD_STARTED' });
     return fetch('/api/animator/create', {

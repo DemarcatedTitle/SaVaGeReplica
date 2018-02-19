@@ -68,7 +68,7 @@ export const animator = (
       return state;
   }
 };
-export function animationInformation(state = [{}], action) {
+export function animationInformation(state = [{ filetype: 2 }], action) {
   const newState = state.slice(-1)[0];
   const prevState = state.slice(-1)[0];
   switch (action.type) {

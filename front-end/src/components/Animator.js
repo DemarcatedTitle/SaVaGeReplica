@@ -74,23 +74,30 @@ export default class Animator extends React.Component {
         data.append(field[1].id, field[1].value);
       }
     });
-    data.append('file', this.state.accepted[0]);
-    data.append('filename', this.state.accepted[0].name);
+    const animationUpload = [
+      this.state.accepted[0],
+      this.state.accepted[0].name,
+    ];
+    const animationInformation = this.props.animationInformation;
+    const animationFrames = [];
+    this.props.animator.forEach(function(frame, number) {
+      animationFrames[number] = {
+        numberOfShapes: frame.get('numberOfShapes'),
+        mode: frame.get('mode'),
+        rep: frame.get('mode'),
+        nth: frame.get('nth'),
+        alpha: frame.get('alpha'),
+        backgroundcolor: frame.get('backgroundcolor'),
+      };
+    });
+    console.log(typeof animationInformation);
+    data.append('animationInformation', JSON.stringify(animationInformation));
+    data.append('animationFrames', JSON.stringify(animationFrames));
+    data.append('image', this.state.accepted[0]);
+    // data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);
   }
   render() {
-    // const actions = [
-    //   <RaisedButton label="Cancel" primary={true} onClick={this.handleClose} />,
-    // ];
-    // const width = this.state.width;
-    // const backdropstyle = {
-    //   width: width + 'px',
-    // };
-    // const animationboxstyle = {
-    //   width: 3 * width + 'px',
-    // };
-
-    // console.log(Array.from(this.props.frames));
     const frameArr = Array.from(this.props.frames);
     return (
       <div className="mainContainer">
@@ -132,7 +139,7 @@ export default class Animator extends React.Component {
             </div>
             <div className="formElement">
               <TextField
-                id="outputfilename"
+                id="filename"
                 onChange={this.handleTyping}
                 hintText="Output Filename"
               />
@@ -140,7 +147,7 @@ export default class Animator extends React.Component {
             <div className="formElement">
               <SelectField
                 floatingLabelText="Output Filetype"
-                value={2}
+                value={this.props.animationInformation.filetype}
                 onChange={this.handleChange}
               >
                 <MenuItem value={0} primaryText="png" />

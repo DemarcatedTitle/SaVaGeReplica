@@ -3,8 +3,8 @@ const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
 const imageDB = require('../../../imageDB.js');
 const path = require('path');
-// const knexfile = require('../../../knexfile.js');
-// const knex = require('../../lib/knex.js');
+const knexfile = require('../../../knexfile.js');
+const knex = require('knex')(knexfile);
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 // const uploadID = uuidv4();
@@ -201,7 +201,10 @@ module.exports = {
     });
   },
   animate: async function animate(request, h, err) {
-    console.log('Uploading');
+    console.log('\n\nanimate\n\n');
+    console.log(request.payload);
+
+    return 'STRING';
   },
 };
 
