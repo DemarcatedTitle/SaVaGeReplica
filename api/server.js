@@ -11,8 +11,6 @@ async function SavageServer() {
   server.route(imageRoutes);
   await server.start();
   console.log('Server started at: ' + server.info.uri);
-  // .then(test => console.log('Server started at: ' + server.info.uri))
-  // .catch(err => console.log(err));
 }
 
 SavageServer();
