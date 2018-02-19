@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Animation.css';
 import Dropzone from 'react-dropzone';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
@@ -8,7 +9,8 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import ResultCard from './ResultCard';
 import LinearProgress from 'material-ui/LinearProgress';
-import image from '../workingexample.svg';
+// import image from '../sprite.css-4272fb9d.svg';
+// const image = require('../sprite.css-4272fb9d.svg');
 
 /* eslint-disable no-console */
 export default class TextBox extends React.Component {
@@ -21,6 +23,7 @@ export default class TextBox extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.state = {
+      width: '2048',
       mode: 1,
       open: false,
       repDialog: false,
@@ -64,14 +67,14 @@ export default class TextBox extends React.Component {
     const actions = [
       <RaisedButton label="Cancel" primary={true} onClick={this.handleClose} />,
     ];
-    return (
-      <div>
-        Hi
-        <div className="backdrop">
-          <div style={{ background: `url(${image})` }} className="projection" />
-        </div>
-      </div>
-    );
+    // const width = this.state.width;
+    // const backdropstyle = {
+    //   width: width + 'px',
+    // };
+    // const animationboxstyle = {
+    //   width: 3 * width + 'px',
+    // };
+
     return (
       <div className="mainContainer">
         <Paper className="upload paper section">
