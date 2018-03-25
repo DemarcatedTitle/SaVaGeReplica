@@ -37,6 +37,10 @@ services:
     image: postgres:10-alpine
     env_file:
       - ./common.env
+  pgadmin4:
+    image: dpage/pgadmin4
+    env_file:
+      - ./common.env
   redis:
     image: redis:4-alpine
   # migrate-seed:
