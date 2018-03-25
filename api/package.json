@@ -8,7 +8,8 @@
     "start-qa": "node server.js",
     "drop-tables": "./src/bin/drop-tables.js",
     "rebuild-db": "npm run drop-tables && knex migrate:latest && knex seed:run",
-    "migrate-seed": "knex migrate:latest && knex seed:run"
+    "migrate-seed": "knex migrate:latest && knex seed:run",
+    "migrate-make": "knex migrate:make"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,9 @@
     "knex": "^0.14.2",
     "pg": "^7.4.1",
     "redis": "^2.8.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "gulp": "^3.9.1",
+    "gulp-svg-sprite": "^1.3.7"
   },
   "devDependencies": {
     "nodemon": "^1.14.8"
