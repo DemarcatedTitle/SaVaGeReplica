@@ -101,7 +101,7 @@ export default class Animator extends React.Component {
     const frameArr = Array.from(this.props.frames);
     return (
       <div className="columnContainer">
-        <div className="mainContainer">
+        <div className="rowContainer">
           <div className="viewer">
             <Paper className="upload paper section">
               <p>Uploaded Image</p>

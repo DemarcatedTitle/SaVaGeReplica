@@ -35,7 +35,7 @@
   flex-grow: 1;
   max-width: 1/3;
 }
-.mainContainer {
+.rowContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;

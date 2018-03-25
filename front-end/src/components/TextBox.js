@@ -76,7 +76,7 @@ export default class TextBox extends React.Component {
     // };
 
     return (
-      <div className="mainContainer">
+      <div className="rowContainer">
         <Paper className="upload paper section">
           <p>Uploaded Image</p>
           <Dropzone
