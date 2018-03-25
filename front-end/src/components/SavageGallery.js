@@ -2,6 +2,7 @@ import React from 'react';
 import { GridList, GridTile } from 'material-ui/GridList';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 const image = require('../sprite.css-4272fb9d.svg');
 export default class SavageGallery extends React.PureComponent {
   constructor(props) {
@@ -20,6 +21,11 @@ export default class SavageGallery extends React.PureComponent {
   };
   handleClose = () => {
     this.setState({ open: false });
+  };
+  deleteImage = imageID => {
+    this.setState({ open: false });
+    this.props.deleteImage(imageID);
+    console.log('Deleting image...');
   };
   componentDidMount() {
     this.props.fetchAllImages();
@@ -55,11 +61,19 @@ export default class SavageGallery extends React.PureComponent {
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
-          <img
-            className="dialogimage"
-            src={this.state.tile.image_location}
-            alt={this.state.tile.name}
-          />
+          <div className="columnContainer">
+            <img
+              className="dialogimage"
+              src={this.state.tile.image_location}
+              alt={this.state.tile.name}
+            />
+            <RaisedButton
+              label="Delete"
+              onClick={() => {
+                this.deleteImage(this.state.tile.id);
+              }}
+            />
+          </div>
         </Dialog>
         <GridList cols={3} cellHeight={360}>
           {images.map(tile => {
