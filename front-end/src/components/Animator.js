@@ -100,99 +100,104 @@ export default class Animator extends React.Component {
   render() {
     const frameArr = Array.from(this.props.frames);
     return (
-      <div className="mainContainer">
-        <div className="viewer">
-          <Paper className="upload paper section">
-            <p>Uploaded Image</p>
-            <Dropzone
-              style={{}}
-              accept="image/png, image/jpg, image/jpeg"
-              onDrop={(accepted, rejected) => {
-                this.setState({ accepted, rejected });
-              }}
-            >
-              <div>
-                {this.state.accepted[0] ? (
-                  <img alt="Your upload" src={this.state.accepted[0].preview} />
-                ) : (
-                  ''
-                )}
-              </div>
-            </Dropzone>
-          </Paper>
-          <Paper className="paper section">
-            <div className="horizontal">
-              <div
-                className="fontButton"
-                onClick={this.props.decrementFrameNumber}
+      <div className="columnContainer">
+        <div className="mainContainer">
+          <div className="viewer">
+            <Paper className="upload paper section">
+              <p>Uploaded Image</p>
+              <Dropzone
+                style={{}}
+                accept="image/png, image/jpg, image/jpeg"
+                onDrop={(accepted, rejected) => {
+                  this.setState({ accepted, rejected });
+                }}
               >
-                -
-              </div>
-              Number of frames:
-              {this.props.frames.size}
-              <div
-                className="fontButton"
-                onClick={this.props.incrementFrameNumber}
-              >
-                +
-              </div>
-            </div>
-            <div className="formElement">
-              <TextField
-                id="filename"
-                onChange={this.handleTyping}
-                hintText="Output Filename"
-              />
-            </div>
-            <div className="formElement">
-              <SelectField
-                floatingLabelText="Output Filetype"
-                value={this.props.animationInformation.filetype}
-                onChange={this.handleChange}
-              >
-                <MenuItem value={0} primaryText="png" />
-                <MenuItem value={1} primaryText="jpg" />
-                <MenuItem value={2} primaryText="svg" />
-                <MenuItem value={3} primaryText="gif" />
-              </SelectField>
-            </div>
-            <div className="formElement">
-              <TextField
-                id="resize"
-                onChange={this.handleTyping}
-                hintText="Resize"
-              />
-            </div>
-            <div className="formElement">
-              <TextField
-                id="outputsize"
-                onChange={this.handleTyping}
-                hintText="Output Image Size"
-              />
-            </div>
-          </Paper>
-
-          <div className="section">
-            <Paper className="paper outputCard">
-              Current Image
-              {this.props.imgurl === '' ? (
-                <LinearProgress
-                  mode="determinate"
-                  value={this.props.progress}
-                />
-              ) : (
-                <ResultCard
-                  imgurl={this.props.imgurl}
-                  loading={this.props.resultImage.loading}
-                  progress={this.props.progress}
-                />
-              )}
-              <RaisedButton
-                onClick={this.uploadImage}
-                label="Start Process"
-                primary={true}
-              />
+                <div>
+                  {this.state.accepted[0] ? (
+                    <img
+                      alt="Your upload"
+                      src={this.state.accepted[0].preview}
+                    />
+                  ) : (
+                    ''
+                  )}
+                </div>
+              </Dropzone>
             </Paper>
+            <Paper className="paper section">
+              <div className="horizontal">
+                <div
+                  className="fontButton"
+                  onClick={this.props.decrementFrameNumber}
+                >
+                  -
+                </div>
+                Number of frames:
+                {this.props.frames.size}
+                <div
+                  className="fontButton"
+                  onClick={this.props.incrementFrameNumber}
+                >
+                  +
+                </div>
+              </div>
+              <div className="formElement">
+                <TextField
+                  id="filename"
+                  onChange={this.handleTyping}
+                  hintText="Output Filename"
+                />
+              </div>
+              <div className="formElement">
+                <SelectField
+                  floatingLabelText="Output Filetype"
+                  value={this.props.animationInformation.filetype}
+                  onChange={this.handleChange}
+                >
+                  <MenuItem value={0} primaryText="png" />
+                  <MenuItem value={1} primaryText="jpg" />
+                  <MenuItem value={2} primaryText="svg" />
+                  <MenuItem value={3} primaryText="gif" />
+                </SelectField>
+              </div>
+              <div className="formElement">
+                <TextField
+                  id="resize"
+                  onChange={this.handleTyping}
+                  hintText="Resize"
+                />
+              </div>
+              <div className="formElement">
+                <TextField
+                  id="outputsize"
+                  onChange={this.handleTyping}
+                  hintText="Output Image Size"
+                />
+              </div>
+            </Paper>
+
+            <div className="section">
+              <Paper className="paper outputCard">
+                Current Image
+                {this.props.imgurl === '' ? (
+                  <LinearProgress
+                    mode="determinate"
+                    value={this.props.progress}
+                  />
+                ) : (
+                  <ResultCard
+                    imgurl={this.props.imgurl}
+                    loading={this.props.resultImage.loading}
+                    progress={this.props.progress}
+                  />
+                )}
+                <RaisedButton
+                  onClick={this.uploadImage}
+                  label="Start Process"
+                  primary={true}
+                />
+              </Paper>
+            </div>
           </div>
         </div>
         <div className="controls section">
