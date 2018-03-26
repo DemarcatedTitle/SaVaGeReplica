@@ -1,13 +1,13 @@
-export const deleteImage = function deleteImage(imageID) {
+export const deleteImage = function deleteImage(imageId) {
   return function(dispatch) {
-    dispatch({ type: 'DELETE_IMAGE_REQUEST' });
-    return fetch('/api/image/delete/' + imageID, {
+    dispatch({ type: 'DELETE_IMAGE_REQUEST', imageId: imageId });
+    return fetch('/api/image/delete/' + imageId, {
       method: 'DELETE',
       credentials: 'same-origin',
     })
       .then(function(response) {
         if (response.status === 200) {
-          response.json().then(data => {
+          response.text().then(data => {
             console.log(data);
             dispatch({
               type: 'DELETE_IMAGE_REQUEST_SUCCESSFUL',
