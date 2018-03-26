@@ -1,6 +1,6 @@
 export const deleteImage = function deleteImage(imageID) {
   return function(dispatch) {
-    dispatch({ type: 'DELETE_IMAGE' });
+    dispatch({ type: 'DELETE_IMAGE_REQUEST' });
     return fetch('/api/image/delete/' + imageID, {
       method: 'DELETE',
       credentials: 'same-origin',
@@ -10,19 +10,19 @@ export const deleteImage = function deleteImage(imageID) {
           response.json().then(data => {
             console.log(data);
             dispatch({
-              type: 'DELETE_SUCCESSFUL',
+              type: 'DELETE_IMAGE_REQUEST_SUCCESSFUL',
             });
           });
         } else {
           return dispatch({
-            type: 'DELETE_FAILED',
+            type: 'DELETE_IMAGE_REQUEST_FAILED',
             error: response.statusText,
           });
         }
       })
       .catch(error => {
         console.error(error);
-        return dispatch({ type: 'DELETE_FAILED', error: error });
+        return dispatch({ type: 'DELETE_IMAGE_REQUEST_FAILED', error: error });
       });
   };
 };
