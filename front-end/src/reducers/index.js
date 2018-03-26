@@ -5,6 +5,7 @@ import textApp from './textApp';
 import resultImage from './resultImage';
 import progress from './progress';
 import allImages from './getAllImages';
+import deleteImage from './deleteImage';
 const TextApp = combineReducers({
   textApp,
   animator,
@@ -12,6 +13,7 @@ const TextApp = combineReducers({
   resultImage,
   progress,
   allImages,
+  deleteImage,
   animationInformation,
 });
 
