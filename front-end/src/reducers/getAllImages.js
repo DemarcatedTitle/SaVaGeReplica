@@ -24,6 +24,17 @@ const allImages = (
         action.payload.id,
       ]);
       return [...state, newState];
+    case 'DELETE_IMAGE_REQUEST':
+      newState['imageLocations'] = newState.imageLocations.filter(function(
+        image_location
+      ) {
+        if (image_location.id === action.imageId) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+      return [...state, newState];
     default:
       return state;
   }
