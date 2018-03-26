@@ -119,6 +119,8 @@ form {
 }
 .gallerydialog {
   width: fit-content;
+  display: flex;
+  flex-direction: column;
 }
 
 .animator {

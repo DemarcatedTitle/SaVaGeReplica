@@ -21,6 +21,15 @@ module.exports = [
     // },
   },
   {
+    method: 'DELETE',
+    path: '/api/image/delete/{imageId}',
+    handler: imagecontroller.deleteImage,
+    // config: {
+    //   tags: ['api'],
+    //   description: 'An example endpoint using a controller',
+    // },
+  },
+  {
     method: 'GET',
     path: '/api/image/all',
     handler: imagecontroller.getAll,

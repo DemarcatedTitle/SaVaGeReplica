@@ -16,9 +16,6 @@ services:
   postgres:
     ports:
       - "5432:5432"
-  pgadmin4:
-    ports:
-      - "80:80"
   # oidc:
   #   ports:
   #     - "7000:9000"
