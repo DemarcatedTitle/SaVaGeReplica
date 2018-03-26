@@ -1,4 +1,6 @@
 const fs = require('fs');
+const util = require('util');
+const unlink = util.promisify(fs.unlink);
 const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
 const imageDB = require('../../../imageDB.js');
@@ -6,6 +8,7 @@ const path = require('path');
 const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
 const imageController = require('./image-controller');
+const Boom = require('boom');
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 // const uploadID = uuidv4();
@@ -55,6 +58,69 @@ module.exports = {
         }
       });
     });
+  },
+  deleteImage: async (request, h, err) => {
+    const imageId = request.params.imageId;
+    const svg_image_deleted = await knex('svg_images')
+      .where('image_id', '=', imageId)
+      .delete();
+    if (svg_image_deleted > 0) {
+      const path = `src/application/image/images/`;
+      try {
+        await unlink(path + imageId + '.svg');
+        await unlink(path + imageId);
+      } catch (err) {
+        if (err) {
+          return Boom.notFound();
+        }
+      }
+    } else {
+      return Boom.notFound();
+    }
+    console.log('Delete');
+    return h.response('Okay');
+    // return new Promise(function(resolve) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   // if you'd like to select database 3, instead of 0 (default), call // client.select(3, function() { /* ... */ });
+    //   //
+    //   // If client.get uuid is integer, return integer for progress indicator
+    //   //
+    //   // If client.get uuid is 'finished'
+    //   // get image from db based on uuid
+    //   //
+
+    //   client.on('error', function(err) {
+    //     console.log('Error ' + err);
+    //   });
+    //   client.get(uploadID, function(err, results) {
+    //     if (results !== null) {
+    //       const percent = parseInt(results * 100);
+    //       if (percent === 100) {
+    //         // currently a race condition
+    //         console.log(uploadID);
+    //         const yoursvg = imageDB.getImage(uploadID);
+    //         yoursvg.then(thesvg => {
+    //           if (thesvg == []) {
+    //             resolve(h.response({ progress: percent.toString() }));
+    //           } else {
+    //             let path = `src/application/image/images/${uploadID}.svg`;
+    //             resolve(h.file(path));
+    //             const response = h.response(thesvg[0].image);
+    //             response.type('image/svg+xml');
+    //             resolve(h.response(response));
+    //           }
+    //         });
+    //       } else {
+    //         console.log(percent);
+    //         resolve(h.response({ progress: percent.toString() }));
+    //       }
+    //     } else {
+    //       resolve(h.response('error'));
+    //     }
+    //   });
+    // });
   },
   getUploaded: (request, h, err) => {
     console.log('get uploaded');
