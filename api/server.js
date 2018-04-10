@@ -1,9 +1,9 @@
 const Hapi = require('hapi');
 const imageRoutes = require('./src/application/image/image-routes.js');
-const imageDB = require('./imageDB.js');
+const dbService = require('./db-service.js');
 const Inert = require('inert');
 
-imageDB.start();
+dbService.start();
 
 async function SavageServer() {
   const server = new Hapi.Server({ port: 9000 });

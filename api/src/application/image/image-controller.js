@@ -1,14 +1,17 @@
-const fs = require('fs');
 const util = require('util');
+const fs = require('fs');
+const writeFile = util.promisify(fs.writeFile);
 const unlink = util.promisify(fs.unlink);
+const mkdir = util.promisify(fs.mkdir);
 const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
-const imageDB = require('../../../imageDB.js');
+const dbService = require('../../../db-service.js');
 const path = require('path');
 const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
 const imageController = require('./image-controller');
 const Boom = require('boom');
+const animateTask = require('./gulp-service.js').animate;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 // const uploadID = uuidv4();
@@ -37,16 +40,13 @@ module.exports = {
           if (percent === 100) {
             // currently a race condition
             console.log(uploadID);
-            const yoursvg = imageDB.getImage(uploadID);
-            yoursvg.then(thesvg => {
-              if (thesvg == []) {
+            const uploadedSVGData = dbService.getImageData(uploadID);
+            uploadedSVGData.then(thesvg => {
+              if (thesvg === []) {
                 resolve(h.response({ progress: percent.toString() }));
               } else {
-                let path = `src/application/image/images/${uploadID}.svg`;
-                resolve(h.file(path));
-                const response = h.response(thesvg[0].image);
-                response.type('image/svg+xml');
-                resolve(h.response(response));
+                let pathToFile = `src/application/image/images/${uploadID}.svg`;
+                resolve(h.file(pathToFile));
               }
             });
           } else {
@@ -59,16 +59,17 @@ module.exports = {
       });
     });
   },
+
   deleteImage: async (request, h, err) => {
     const imageId = request.params.imageId;
-    const svg_image_deleted = await knex('svg_images')
-      .where('image_id', '=', imageId)
+    const svg_image_deleted = await knex('image_references')
+      .where('id', '=', imageId)
       .delete();
     if (svg_image_deleted > 0) {
-      const path = `src/application/image/images/`;
+      const pathToFile = `src/application/image/images/`;
       try {
-        await unlink(path + imageId + '.svg');
-        await unlink(path + imageId);
+        await unlink(pathToFile + imageId + '.svg');
+        await unlink(pathToFile + imageId);
       } catch (err) {
         if (err) {
           return Boom.notFound();
@@ -79,7 +80,7 @@ module.exports = {
     }
     console.log('Delete');
     return h.response('Okay');
-    // return new Promise(function(resolve) {
+    // return new Promise(function(resolve) {{{{
     //   if (err) {
     //     throw err;
     //   }
@@ -100,7 +101,7 @@ module.exports = {
     //       if (percent === 100) {
     //         // currently a race condition
     //         console.log(uploadID);
-    //         const yoursvg = imageDB.getImage(uploadID);
+    //         const yoursvg = dbService.getImage(uploadID);
     //         yoursvg.then(thesvg => {
     //           if (thesvg == []) {
     //             resolve(h.response({ progress: percent.toString() }));
@@ -120,28 +121,17 @@ module.exports = {
     //       resolve(h.response('error'));
     //     }
     //   });
-    // });
+    // });}}}
   },
   getUploaded: (request, h, err) => {
     console.log('get uploaded');
     const uploadID = request.params.uploadID;
-    let path = `src/application/image/images/${uploadID}.svg`;
-    return h.file(path);
-    // return new Promise(function(resolve) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   const yoursvg = imageDB.getImage(uploadID);
-    //   yoursvg.then(thesvg => {
-    //     const response = h.response(thesvg[0].image);
-    //     response.type('image/svg+xml');
-    //     resolve(h.response(response));
-    //   });
-    // });
+    let pathToFile = `src/application/image/images/${uploadID}.svg`;
+    return h.file(pathToFile);
   },
   getAll: (request, h, err) => {
     return new Promise(function(resolve) {
-      imageDB
+      dbService
         .getAllImages()
         .then(allImages => {
           console.log(allImages);
@@ -234,11 +224,10 @@ module.exports = {
               // response.type('image/svg+xml');
               // return response;
               const dbImageShape = {
-                image: yoursvg,
                 name: outputName(request.payload.outputfilename),
-                image_id: imageID,
+                id: imageID,
               };
-              imageDB.addImage(dbImageShape);
+              dbService.addImage(dbImageShape);
             })
             .stdout.on('data', function(data) {
               //
@@ -270,9 +259,28 @@ module.exports = {
   },
   animate: async (request, h, err) => {
     console.log('\n\nanimate\n\n');
+    const imageID = uuidv4();
+    const pathToFile = './src/application/image/images/' + imageID + '/';
+    const pathToSource = pathToFile + 'uploaded';
+    const pathToFrames = pathToFile + 'frames';
+    console.log(request.payload);
+    await mkdir(pathToFile)
+      .then(val => mkdir(pathToSource))
+      .then(val => mkdir(pathToFrames))
+      .then(val =>
+        writeFile(pathToSource + '/' + imageID, request.payload.image)
+      )
+      .catch(error => console.error(error));
+    // TODO run commands to turn into svg
+    // TODO run gulp to combine svg
+    animateTask(pathToSource);
     request.payload.animationFrames.forEach(function(item, index) {
       item['frameNumber'] = index;
+      item['outputfilename'] = 'frame' + index;
+      item['pathToSource'] = pathToSource + '/' + imageID;
+      item['pathToOutput'] = pathToFile + 'frames';
       console.log(module.exports.commandConstructor(item));
+      module.exports.replicate(request, item);
     });
 
     return 'STRING';
@@ -316,18 +324,88 @@ module.exports = {
         return defaults.name;
       }
     }
+    function pathToSource(pathToSource) {
+      if (settings.pathToSource) {
+        return settings.pathToSource;
+      } else {
+        return './src/application/image/images/';
+      }
+    }
+    function pathToOutput(pathToOutput) {
+      if (settings.pathToOutput) {
+        return settings.pathToOutput;
+      } else {
+        return './src/application/image/images/';
+      }
+    }
     let frameNumber = '';
     if (settings.frameNumber) {
       frameNumber = `frame${settings.frameNumber}`;
     }
     const shapes = numShapes(settings.numberOfShapes);
-    // console.log(typeof shapes);
-    const command = `foglemanPrimitive -i ./src/application/image/images/${imageID}${frameNumber} -n ${shapes} -rep ${rep(
-      settings.rep
-    )} -m ${mode(
+    // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
+    // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
+    //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
+    //   settings.mode
+    // )} -v -o ${pathToOutput()}/${outputName()}.svg`;
+    const command = `foglemanPrimitive -i ${pathToSource()} -n ${shapes ||
+      50} -rep ${rep(settings.rep) || 50} -m ${mode(
       settings.mode
-    )} -v -o ./src/application/image/images/${imageID}.svg`;
+    )} -v -o ${pathToOutput()}/${outputName()}.svg`;
     return command;
+  },
+  replicate: (request, imageSettings) => {
+    const command = module.exports.commandConstructor(imageSettings);
+    child_process
+      .exec(command, function(error, stdout, stderr) {
+        //
+        // Process is complete, insert into DB based on uuid
+        // Then update redis to indicate this
+        //
+        if (error) {
+          console.error(`exec error: ${error}`);
+        }
+        var yoursvg;
+        yoursvg = stdout.substring(
+          stdout.indexOf('<svg'),
+          stdout.indexOf('</svg>') + 6
+        );
+        console.log(`stderr: ${stderr}`);
+        // const response = h.response(yoursvg);
+        // response.type('image/svg+xml');
+        // return response;
+        //
+        // const dbImageShape = {
+        //   name: outputName(imageSettings.outputFilename),
+        //   id: imageID,
+        // };
+        // dbService.addImage(dbImageShape);
+      })
+      .stdout.on('data', function(data) {
+        //
+        // While process is running update progress on redis
+        //
+        const currentStep = parseInt(data.slice(0, data.indexOf(':')));
+        // console.log(currentStep);
+        // console.log(``);
+        //
+        //
+        // TODO change it so it doesn't undo setting it to 1
+        //
+        console.log(
+          `currentStep: ${currentStep}\nshapes: ${imageSettings.frameNumber}`
+        );
+        const progress = isNaN(currentStep)
+          ? 0
+          : currentStep / imageSettings.frameNumber;
+        console.log(progress);
+        if (!isNaN(currentStep)) {
+          if (progress > 100) {
+            console.log('\n\nprogress is over 100 \n\n');
+          }
+          client.set(imageSettings.outputFilename, progress);
+        }
+      });
   },
 };
 
