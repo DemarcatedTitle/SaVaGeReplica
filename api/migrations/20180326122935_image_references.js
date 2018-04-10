@@ -1,13 +1,14 @@
 exports.up = function(knex, Promise) {
-  knex.createTable('image_references', function(table) {
+  return knex.schema.createTable('image_references', function(table) {
     table.uuid('id');
+    table.uuid('owner_id');
     table.string('name');
     table.string('filetype');
-    table.uuid('owner_id');
+    table.string('type');
     table.timestamps();
   });
 };
 
 exports.down = function(knex, Promise) {
-  knex.dropTable('image_references');
+  return knex.schema.dropTable('image_references');
 };
