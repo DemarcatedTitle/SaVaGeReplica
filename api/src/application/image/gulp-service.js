@@ -11,8 +11,20 @@ const config = {
     },
   },
 };
-exports.animate = (path, imageId) =>
-  gulp
+exports.animate = (path, out, imageId) => {
+  console.log('\ngulp.animate\n');
+  console.log(path);
+  return gulp
     .src(path + '/*.svg')
     .pipe(svgSprite(config))
-    .pipe(gulp.dest('out'));
+    .pipe(gulp.dest(out));
+};
+
+exports.watcher = (path, quantity) => {
+  console.log(`watcher path is \n${path}`);
+  return gulp.watch(path, function(event) {
+    console.log(
+      'File ' + event.path + ' was ' + event.type + ', running tasks...'
+    );
+  });
+};

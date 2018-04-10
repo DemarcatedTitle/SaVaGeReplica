@@ -12,6 +12,7 @@ const knex = require('knex')(knexfile);
 const imageController = require('./image-controller');
 const Boom = require('boom');
 const animateTask = require('./gulp-service.js').animate;
+const watcher = require('./gulp-service.js').watcher;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 // const uploadID = uuidv4();
@@ -263,7 +264,7 @@ module.exports = {
     const pathToFile = './src/application/image/images/' + imageID + '/';
     const pathToSource = pathToFile + 'uploaded';
     const pathToFrames = pathToFile + 'frames';
-    console.log(request.payload);
+    // console.log(request.payload);
     await mkdir(pathToFile)
       .then(val => mkdir(pathToSource))
       .then(val => mkdir(pathToFrames))
@@ -271,17 +272,42 @@ module.exports = {
         writeFile(pathToSource + '/' + imageID, request.payload.image)
       )
       .catch(error => console.error(error));
-    // TODO run commands to turn into svg
     // TODO run gulp to combine svg
-    animateTask(pathToSource);
-    request.payload.animationFrames.forEach(function(item, index) {
-      item['frameNumber'] = index;
-      item['outputfilename'] = 'frame' + index;
-      item['pathToSource'] = pathToSource + '/' + imageID;
-      item['pathToOutput'] = pathToFile + 'frames';
-      console.log(module.exports.commandConstructor(item));
-      module.exports.replicate(request, item);
+    const framePromises = Array.from(request.payload.animationFrames, function(
+      frame,
+      index
+    ) {
+      console.log('before replication');
+      frame['frameNumber'] = index;
+      frame['outputfilename'] = 'frame' + index;
+      frame['pathToSource'] = pathToSource + '/' + imageID;
+      frame['pathToOutput'] = pathToFile + 'frames';
+      return new Promise((resolve, reject) => {
+        module.exports
+          .replicate(request, frame)
+          .on('error', reject)
+          .on('close', resolve);
+      });
     });
+    Promise.all(framePromises)
+      .then(values => {
+        console.log(values);
+        animateTask(pathToFrames, pathToFile);
+      })
+      .catch(err => {
+        console.log('Catch error\n');
+        console.error(err);
+        console.log('Catch error\n');
+      });
+    // request.payload.animationFrames.forEach(function(item, index) {
+    //   console.log('before replication');
+    //   item['frameNumber'] = index;
+    //   item['outputfilename'] = 'frame' + index;
+    //   item['pathToSource'] = pathToSource + '/' + imageID;
+    //   item['pathToOutput'] = pathToFile + 'frames';
+    //   // console.log(module.exports.commandConstructor(item));
+    //   module.exports.replicate(request, item);
+    // });
 
     return 'STRING';
   },
@@ -349,14 +375,14 @@ module.exports = {
     //   settings.mode
     // )} -v -o ${pathToOutput()}/${outputName()}.svg`;
     const command = `foglemanPrimitive -i ${pathToSource()} -n ${shapes ||
-      50} -rep ${rep(settings.rep) || 50} -m ${mode(
+      5} -rep ${rep(settings.rep) || 5} -m ${mode(
       settings.mode
     )} -v -o ${pathToOutput()}/${outputName()}.svg`;
     return command;
   },
   replicate: (request, imageSettings) => {
     const command = module.exports.commandConstructor(imageSettings);
-    child_process
+    return child_process
       .exec(command, function(error, stdout, stderr) {
         //
         // Process is complete, insert into DB based on uuid
@@ -370,7 +396,7 @@ module.exports = {
           stdout.indexOf('<svg'),
           stdout.indexOf('</svg>') + 6
         );
-        console.log(`stderr: ${stderr}`);
+        // console.log(`stderr: ${stderr}`);
         // const response = h.response(yoursvg);
         // response.type('image/svg+xml');
         // return response;
@@ -388,23 +414,25 @@ module.exports = {
         const currentStep = parseInt(data.slice(0, data.indexOf(':')));
         // console.log(currentStep);
         // console.log(``);
-        //
-        //
         // TODO change it so it doesn't undo setting it to 1
-        //
-        console.log(
-          `currentStep: ${currentStep}\nshapes: ${imageSettings.frameNumber}`
-        );
+        // console.log(
+        //   `currentStep: ${currentStep}\nshapes: ${imageSettings.frameNumber}`
+        // );
         const progress = isNaN(currentStep)
           ? 0
           : currentStep / imageSettings.frameNumber;
-        console.log(progress);
-        if (!isNaN(currentStep)) {
-          if (progress > 100) {
-            console.log('\n\nprogress is over 100 \n\n');
-          }
-          client.set(imageSettings.outputFilename, progress);
-        }
+        // console.log(progress);
+        // if (!isNaN(currentStep)) {
+        //   if (progress > 100) {
+        //     console.log('\n\nprogress is over 100 \n\n');
+        //   }
+        //   // client.set(imageSettings.outputFilename, progress);
+        // }
+      })
+      .on('close', function(item1, item2) {
+        console.log('closed');
+        console.log(item1);
+        console.log(item2);
       });
   },
 };
