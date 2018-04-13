@@ -63,14 +63,14 @@ module.exports = {
         if (settings.frameNumber) {
           frameNumber = `frame${settings.frameNumber}`;
         }
-        const shapes = numShapes(settings.numberOfShapes);
+        this.shapes = numShapes(settings.numberOfShapes);
         // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
         // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
         //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
         //   settings.mode
         // )} -v -o ${pathToOutput()}/${outputName()}.svg`;
-        this.command = `foglemanPrimitive -i ${pathToSource()} -n ${shapes ||
-          5} -rep ${rep(settings.rep) || 5} -m ${mode(
+        this.command = `foglemanPrimitive -i ${pathToSource()} -n ${this
+          .shapes || 5} -rep ${rep(settings.rep) || 5} -m ${mode(
           settings.mode
         )} -v -o ${settings.output}.svg`;
       }
