@@ -14,6 +14,7 @@ const imageController = require('./image-controller');
 const Boom = require('boom');
 const animateTask = require('./gulp-service.js').animate;
 const watcher = require('./gulp-service.js').watcher;
+const commandConstructor = require('./cli-service.js').commandConstructor;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 // const uploadID = uuidv4();
@@ -37,6 +38,7 @@ module.exports = {
         console.log('Error ' + err);
       });
       client.get(uploadID, function(err, results) {
+        console.log(`Results is: ${results}`);
         if (results !== null) {
           const percent = parseInt(results * 100);
           if (percent === 100) {
@@ -48,6 +50,7 @@ module.exports = {
                 resolve(h.response({ progress: percent.toString() }));
               } else {
                 let pathToFile = `src/application/image/images/${uploadID}.svg`;
+                console.log(`path to file is ${pathToFile}`);
                 resolve(h.file(pathToFile));
               }
             });
@@ -149,114 +152,91 @@ module.exports = {
       }
       const imageID = uuidv4();
       let defaults = {};
+      const pathToSource = './src/application/image/images/' + imageID;
+      const pathToDir = './src/application/image/images/';
       defaults.numofshapes = 2;
       defaults.rep = 0;
       defaults.nth = 0;
       defaults.mode = 1;
       defaults.name = 'Your Picture';
-      fs.writeFile(
-        './src/application/image/images/' + imageID,
-        request.payload.file,
-        err => {
-          if (err) throw err;
-          console.log('The file has been saved!');
-          function numShapes(numofshapes) {
-            if (
-              typeof parseInt(numofshapes) === 'number' &&
-              numofshapes < 10000
-            ) {
-              return numofshapes;
-            } else {
-              return defaults.numofshapes;
-            }
+      fs.writeFile(pathToSource, request.payload.file, err => {
+        if (err) throw err;
+        console.log('The file has been saved!');
+        function outputName(name) {
+          if (request.payload.outputfilename) {
+            return request.payload.outputfilename;
+          } else {
+            return defaults.name;
           }
-          function rep(rep) {
-            if (typeof parseInt(rep) === 'number' && rep < 10000) {
-              return rep;
-            } else {
-              return defaults.rep;
-            }
-          }
-          function mode(mode) {
-            console.log(mode);
-            if (
-              typeof parseInt(request.payload.mode) === 'number' &&
-              request.payload.mode < 9
-            ) {
-              return request.payload.mode;
-            } else {
-              return defaults.mode;
-            }
-          }
-          function outputName(name) {
-            if (request.payload.outputfilename) {
-              return request.payload.outputfilename;
-            } else {
-              return defaults.name;
-            }
-          }
-          const shapes = numShapes(request.payload.numofshapes);
-          // console.log(typeof shapes);
-          const command = `foglemanPrimitive -i ./src/application/image/images/${imageID} -n ${shapes} -rep ${rep(
-            request.payload.rep
-          )} -m ${mode(
-            request.payload.mode
-          )} -v -o ./src/application/image/images/${imageID}.svg`;
-          console.log(command);
-          //
-          // Generate a uuid, reply with that uuid
-          // Run the command with that uuid as a filename
-          //
-          child_process
-            .exec(command, function(error, stdout, stderr) {
-              //
-              // Process is complete, insert into DB based on uuid
-              // Then update redis to indicate this
-              //
-              if (error) {
-                console.error(`exec error: ${error}`);
-              }
-              var yoursvg;
-              yoursvg = stdout.substring(
-                stdout.indexOf('<svg'),
-                stdout.indexOf('</svg>') + 6
-              );
-              console.log(`stderr: ${stderr}`);
-              // const response = h.response(yoursvg);
-              // response.type('image/svg+xml');
-              // return response;
-              const dbImageShape = {
-                name: outputName(request.payload.outputfilename),
-                id: imageID,
-              };
-              dbService.addImage(dbImageShape);
-            })
-            .stdout.on('data', function(data) {
-              //
-              // While process is running update progress on redis
-              //
-              const currentStep = parseInt(data.slice(0, data.indexOf(':')));
-              // console.log(currentStep);
-              // console.log(``);
-              //
-              //
-              // TODO change it so it doesn't undo setting it to 1
-              //
-              console.log(`currentStep: ${currentStep}\nshapes: ${shapes}`);
-              const progress = isNaN(currentStep) ? 0 : currentStep / shapes;
-              console.log(progress);
-              if (!isNaN(currentStep)) {
-                if (progress > 100) {
-                  console.log('\n\nprogress is over 100 \n\n');
-                }
-                client.set(imageID, progress);
-              }
-            });
-          client.set(imageID, 0, function() {
-            resolve(h.response({ uploadID: imageID }));
-          });
         }
-      );
+        const imageSettings = {
+          mode: request.payload.mode,
+          outputfilename: request.payload.outputfilename,
+          pathToSource: pathToSource,
+          output: pathToDir + imageID,
+        };
+        console.log();
+        const command = commandConstructor(imageSettings);
+        console.log(command);
+        //
+        // Generate a uuid, reply with that uuid
+        // Run the command with that uuid as a filename
+        //
+        child_process
+          .exec(command.command, function(error, stdout, stderr) {
+            //
+            // Process is complete, insert into DB based on uuid
+            // Then update redis to indicate this
+            //
+            if (error) {
+              console.error(`exec error: ${error}`);
+            }
+            var yoursvg;
+            yoursvg = stdout.substring(
+              stdout.indexOf('<svg'),
+              stdout.indexOf('</svg>') + 6
+            );
+            if (stderr) {
+              console.log(`stderr: ${stderr}`);
+            }
+            // const response = h.response(yoursvg);
+            // response.type('image/svg+xml');
+            // return response;
+            const dbImageShape = {
+              name: outputName(request.payload.outputfilename),
+              id: imageID,
+            };
+            dbService.addImage(dbImageShape);
+          })
+          .stdout.on('data', function(data) {
+            //
+            // While process is running update progress on redis
+            //
+            const currentStep = parseInt(data.slice(0, data.indexOf(':')));
+            // console.log(currentStep);
+            // console.log(``);
+            //
+            //
+            // TODO change it so it doesn't undo setting it to 1
+            //
+            console.log(
+              `currentStep: ${currentStep}\nshapes: ${command.shapes}`
+            );
+            const progress = isNaN(currentStep)
+              ? 0
+              : currentStep / command.shapes;
+            console.log(progress);
+            if (!isNaN(currentStep)) {
+              if (progress > 100) {
+                console.log('\n\nprogress is over 100 \n\n');
+              }
+              client.set(imageID, progress);
+            }
+          });
+        client.set(imageID, 0, function() {
+          resolve(h.response({ uploadID: imageID }));
+        });
+      });
     });
   },
   animate: async (request, h, err) => {
