@@ -9,6 +9,7 @@ const dbService = require('../../../db-service.js');
 const path = require('path');
 const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
+const replicate = require('./cli-service.js').replicate;
 const imageController = require('./image-controller');
 const Boom = require('boom');
 const animateTask = require('./gulp-service.js').animate;
@@ -273,6 +274,14 @@ module.exports = {
       )
       .catch(error => console.error(error));
     // TODO run gulp to combine svg
+    const dbImageShape = {
+      name: request.payload.animationInformation.filename, //outputName(imageSettings.outputFilename),
+      id: imageID,
+      type: 'animation',
+    };
+    console.log(dbImageShape);
+    console.log(request.payload);
+    dbService.addImage(dbImageShape);
     const framePromises = Array.from(request.payload.animationFrames, function(
       frame,
       index
@@ -282,9 +291,36 @@ module.exports = {
       frame['outputfilename'] = 'frame' + index;
       frame['pathToSource'] = pathToSource + '/' + imageID;
       frame['pathToOutput'] = pathToFile + 'frames';
+      frame['output'] = pathToFile + 'frames/frame' + index;
       return new Promise((resolve, reject) => {
-        module.exports
-          .replicate(request, frame)
+        replicate(frame)
+          .stdout.on('data', function(data) {
+            //
+            // While process is running update progress on redis
+            //
+            const currentStep = parseInt(data.slice(0, data.indexOf(':')));
+            // console.log(currentStep);
+            // console.log(``);
+            // TODO change it so it doesn't undo setting it to 1
+            // console.log(
+            //   `currentStep: ${currentStep}\nshapes: ${imageSettings.frameNumber}`
+            // );
+            const progress = isNaN(currentStep)
+              ? 0
+              : currentStep / frame.frameNumber;
+            console.log(
+              'frame number is ' +
+                frame.frameNumber +
+                ' | progress is ' +
+                progress
+            );
+            if (!isNaN(currentStep)) {
+              if (progress > 100) {
+                console.log('\n\nprogress is over 100 \n\n');
+              }
+              client.set(frame.output, progress);
+            }
+          })
           .on('error', reject)
           .on('close', resolve);
       });
@@ -299,141 +335,8 @@ module.exports = {
         console.error(err);
         console.log('Catch error\n');
       });
-    // request.payload.animationFrames.forEach(function(item, index) {
-    //   console.log('before replication');
-    //   item['frameNumber'] = index;
-    //   item['outputfilename'] = 'frame' + index;
-    //   item['pathToSource'] = pathToSource + '/' + imageID;
-    //   item['pathToOutput'] = pathToFile + 'frames';
-    //   // console.log(module.exports.commandConstructor(item));
-    //   module.exports.replicate(request, item);
-    // });
 
     return 'STRING';
-  },
-  commandConstructor: settings => {
-    const imageID = uuidv4();
-    let defaults = {};
-    defaults.numberOfShapes = 2;
-    defaults.rep = 0;
-    defaults.nth = 0;
-    defaults.mode = 1;
-    defaults.name = 'Your Picture';
-    function numShapes(numberOfShapes) {
-      if (
-        typeof parseInt(numberOfShapes) === 'number' &&
-        numberOfShapes < 10000
-      ) {
-        return numberOfShapes;
-      } else {
-        return defaults.numberOfShapes;
-      }
-    }
-    function rep(rep) {
-      if (typeof parseInt(rep) === 'number' && rep < 10000) {
-        return rep;
-      } else {
-        return defaults.rep;
-      }
-    }
-    function mode(mode) {
-      if (typeof parseInt(settings.mode) === 'number' && settings.mode < 9) {
-        return settings.mode;
-      } else {
-        return defaults.mode;
-      }
-    }
-    function outputName(name) {
-      if (settings.outputfilename) {
-        return settings.outputfilename;
-      } else {
-        return defaults.name;
-      }
-    }
-    function pathToSource(pathToSource) {
-      if (settings.pathToSource) {
-        return settings.pathToSource;
-      } else {
-        return './src/application/image/images/';
-      }
-    }
-    function pathToOutput(pathToOutput) {
-      if (settings.pathToOutput) {
-        return settings.pathToOutput;
-      } else {
-        return './src/application/image/images/';
-      }
-    }
-    let frameNumber = '';
-    if (settings.frameNumber) {
-      frameNumber = `frame${settings.frameNumber}`;
-    }
-    const shapes = numShapes(settings.numberOfShapes);
-    // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
-    // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
-    //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
-    //   settings.mode
-    // )} -v -o ${pathToOutput()}/${outputName()}.svg`;
-    const command = `foglemanPrimitive -i ${pathToSource()} -n ${shapes ||
-      5} -rep ${rep(settings.rep) || 5} -m ${mode(
-      settings.mode
-    )} -v -o ${pathToOutput()}/${outputName()}.svg`;
-    return command;
-  },
-  replicate: (request, imageSettings) => {
-    const command = module.exports.commandConstructor(imageSettings);
-    return child_process
-      .exec(command, function(error, stdout, stderr) {
-        //
-        // Process is complete, insert into DB based on uuid
-        // Then update redis to indicate this
-        //
-        if (error) {
-          console.error(`exec error: ${error}`);
-        }
-        var yoursvg;
-        yoursvg = stdout.substring(
-          stdout.indexOf('<svg'),
-          stdout.indexOf('</svg>') + 6
-        );
-        // console.log(`stderr: ${stderr}`);
-        // const response = h.response(yoursvg);
-        // response.type('image/svg+xml');
-        // return response;
-        //
-        // const dbImageShape = {
-        //   name: outputName(imageSettings.outputFilename),
-        //   id: imageID,
-        // };
-        // dbService.addImage(dbImageShape);
-      })
-      .stdout.on('data', function(data) {
-        //
-        // While process is running update progress on redis
-        //
-        const currentStep = parseInt(data.slice(0, data.indexOf(':')));
-        // console.log(currentStep);
-        // console.log(``);
-        // TODO change it so it doesn't undo setting it to 1
-        // console.log(
-        //   `currentStep: ${currentStep}\nshapes: ${imageSettings.frameNumber}`
-        // );
-        const progress = isNaN(currentStep)
-          ? 0
-          : currentStep / imageSettings.frameNumber;
-        // console.log(progress);
-        // if (!isNaN(currentStep)) {
-        //   if (progress > 100) {
-        //     console.log('\n\nprogress is over 100 \n\n');
-        //   }
-        //   // client.set(imageSettings.outputFilename, progress);
-        // }
-      })
-      .on('close', function(item1, item2) {
-        console.log('closed');
-        console.log(item1);
-        console.log(item2);
-      });
   },
 };
 
