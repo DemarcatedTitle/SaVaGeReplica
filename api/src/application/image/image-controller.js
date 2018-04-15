@@ -3,7 +3,6 @@ const fs = require('fs');
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
-const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
 const dbService = require('../../../db-service.js');
 const path = require('path');
@@ -11,16 +10,12 @@ const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
 const replicate = require('./cli-service.js').replicate;
 const redisService = require('./redis-service.js');
-const imageController = require('./image-controller');
 const Boom = require('boom');
 const animateTask = require('./gulp-service.js').animate;
-const watcher = require('./gulp-service.js').watcher;
 const commandConstructor = require('./cli-service.js').commandConstructor;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 const setAsync = promisify(client.set).bind(client);
-const getAsync = promisify(client.get).bind(client);
-// const uploadID = uuidv4();
 module.exports = {
   get: (request, h, err) => {
     const uploadID = request.params.uploadID;
@@ -28,15 +23,6 @@ module.exports = {
       if (err) {
         throw err;
       }
-      // if you'd like to select database 3, instead of 0 (default), call
-      // client.select(3, function() { /* ... */ });
-      //
-      // If client.get uuid is integer, return integer for progress indicator
-      //
-      // If client.get uuid is 'finished'
-      // get image from db based on uuid
-      //
-
       client.on('error', function(err) {
         console.log('Error ' + err);
       });

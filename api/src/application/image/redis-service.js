@@ -10,10 +10,6 @@ module.exports.logProgress = command => data => {
   //
   const currentStep = parseInt(data.slice(0, data.indexOf(':')));
   console.log(typeof currentStep);
-  // console.log(currentStep);
-  // console.log(``);
-  //
-  //
   // TODO change it so it doesn't undo setting it to 1
   //
   console.log(`currentStep: ${currentStep}\nshapes: ${command.shapes}`);
