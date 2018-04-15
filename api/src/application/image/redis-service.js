@@ -31,49 +31,9 @@ module.exports.getProgress = uploadID => {
     console.log(`Progress is: ${progress}`);
     if (progress !== null) {
       const percent = parseInt(progress * 100);
-      if (percent === 100) {
-        // currently a race condition
-        console.log(uploadID);
-        // const uploadedSVGData = dbService.getImageData(uploadID);
-        // uploadedSVGData.then(thesvg => {
-        //     if (thesvg === []) {
-        //     resolve(h.response({ progress: percent.toString() }));
-        //     } else {
-        //     let pathToFile = `src/application/image/images/${uploadID}.svg`;
-        //     console.log(`path to file is ${pathToFile}`);
-        //     resolve(h.file(pathToFile));
-        //     }
-        //     });
-      } else {
-        console.log(percent);
-        return { progress: percent.toString() };
-      }
+      return percent;
     } else {
       throw new Error('There was a problem checking progress');
     }
   });
-  // client.get(uploadID, function(err, results) {
-  //     if (results !== null) {
-  //     const percent = parseInt(results * 100);
-  //     if (percent === 100) {
-  //     // currently a race condition
-  //     console.log(uploadID);
-  //     const uploadedSVGData = dbService.getImageData(uploadID);
-  //     uploadedSVGData.then(thesvg => {
-  //         if (thesvg === []) {
-  //         resolve(h.response({ progress: percent.toString() }));
-  //         } else {
-  //         let pathToFile = `src/application/image/images/${uploadID}.svg`;
-  //         console.log(`path to file is ${pathToFile}`);
-  //         resolve(h.file(pathToFile));
-  //         }
-  //         });
-  //     } else {
-  //     console.log(percent);
-  //     resolve(h.response({ progress: percent.toString() }));
-  //     }
-  //     } else {
-  //       resolve(h.response('error'));
-  //     }
-  // });
 };

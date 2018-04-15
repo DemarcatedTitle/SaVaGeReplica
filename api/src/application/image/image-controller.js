@@ -40,7 +40,18 @@ module.exports = {
       client.on('error', function(err) {
         console.log('Error ' + err);
       });
-      return resolve(redisService.getProgress(uploadID));
+      return resolve(
+        redisService.getProgress(uploadID).then(progress => {
+          if (progress < 100) {
+            return { progress: progress.toString() };
+          } else if (progress === 100) {
+            console.log('get uploaded');
+            const uploadID = request.params.uploadID;
+            let pathToFile = `src/application/image/images/${uploadID}.svg`;
+            return h.file(pathToFile);
+          }
+        })
+      );
     });
   },
 
@@ -64,48 +75,6 @@ module.exports = {
     }
     console.log('Delete');
     return h.response('Okay');
-    // return new Promise(function(resolve) {{{{
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   // if you'd like to select database 3, instead of 0 (default), call // client.select(3, function() { /* ... */ });
-    //   //
-    //   // If client.get uuid is integer, return integer for progress indicator
-    //   //
-    //   // If client.get uuid is 'finished'
-    //   // get image from db based on uuid
-    //   //
-
-    //   client.on('error', function(err) {
-    //     console.log('Error ' + err);
-    //   });
-    //   client.get(uploadID, function(err, results) {
-    //     if (results !== null) {
-    //       const percent = parseInt(results * 100);
-    //       if (percent === 100) {
-    //         // currently a race condition
-    //         console.log(uploadID);
-    //         const yoursvg = dbService.getImage(uploadID);
-    //         yoursvg.then(thesvg => {
-    //           if (thesvg == []) {
-    //             resolve(h.response({ progress: percent.toString() }));
-    //           } else {
-    //             let path = `src/application/image/images/${uploadID}.svg`;
-    //             resolve(h.file(path));
-    //             const response = h.response(thesvg[0].image);
-    //             response.type('image/svg+xml');
-    //             resolve(h.response(response));
-    //           }
-    //         });
-    //       } else {
-    //         console.log(percent);
-    //         resolve(h.response({ progress: percent.toString() }));
-    //       }
-    //     } else {
-    //       resolve(h.response('error'));
-    //     }
-    //   });
-    // });}}}
   },
   getUploaded: (request, h, err) => {
     console.log('get uploaded');
@@ -176,9 +145,8 @@ module.exports = {
         writeFile(pathToSource + '/' + imageID, request.payload.image)
       )
       .catch(error => console.error(error));
-    // TODO run gulp to combine svg
     const dbImageShape = {
-      name: request.payload.animationInformation.filename, //outputName(imageSettings.outputFilename),
+      name: request.payload.animationInformation.filename,
       id: imageID,
       type: 'animation',
     };
