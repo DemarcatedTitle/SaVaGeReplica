@@ -1,8 +1,8 @@
-const util = require('util');
+const { promisify } = require('util');
 const fs = require('fs');
-const writeFile = util.promisify(fs.writeFile);
-const unlink = util.promisify(fs.unlink);
-const mkdir = util.promisify(fs.mkdir);
+const writeFile = promisify(fs.writeFile);
+const unlink = promisify(fs.unlink);
+const mkdir = promisify(fs.mkdir);
 const child_process = require('child_process');
 const uuidv4 = require('uuid/v4');
 const dbService = require('../../../db-service.js');
@@ -17,6 +17,7 @@ const watcher = require('./gulp-service.js').watcher;
 const commandConstructor = require('./cli-service.js').commandConstructor;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
+const setAsync = promisify(client.set).bind(client);
 // const uploadID = uuidv4();
 module.exports = {
   get: (request, h, err) => {
@@ -145,11 +146,8 @@ module.exports = {
         .catch(err => console.log(err));
     });
   },
-  uploadImage: function(request, h, err) {
-    return new Promise(function(resolve) {
-      if (err) {
-        throw err;
-      }
+  uploadImage: async function(request, h, err) {
+    try {
       const imageID = uuidv4();
       let defaults = {};
       const pathToSource = './src/application/image/images/' + imageID;
@@ -159,85 +157,54 @@ module.exports = {
       defaults.nth = 0;
       defaults.mode = 1;
       defaults.name = 'Your Picture';
-      fs.writeFile(pathToSource, request.payload.file, err => {
-        if (err) throw err;
-        console.log('The file has been saved!');
-        function outputName(name) {
-          if (request.payload.outputfilename) {
-            return request.payload.outputfilename;
-          } else {
-            return defaults.name;
+      const imageSettings = {
+        mode: request.payload.mode,
+        outputfilename: request.payload.outputfilename,
+        pathToSource: pathToSource,
+        output: pathToDir + imageID,
+        numofshapes: request.payload.numofshapes,
+      };
+      await writeFile(pathToSource, request.payload.file);
+      const command = commandConstructor(imageSettings);
+      replicate(command.command, imageSettings)
+        .stdout.on('data', function(data) {
+          //
+          // While process is running update progress on redis
+          //
+          const currentStep = parseInt(data.slice(0, data.indexOf(':')));
+          // console.log(currentStep);
+          // console.log(``);
+          //
+          //
+          // TODO change it so it doesn't undo setting it to 1
+          //
+          console.log(`currentStep: ${currentStep}\nshapes: ${command.shapes}`);
+          const progress = isNaN(currentStep)
+            ? 0
+            : currentStep / command.shapes;
+          // console.log(progress);
+          if (!isNaN(currentStep)) {
+            if (progress > 100) {
+              console.log('\n\nprogress is over 100 \n\n');
+            }
+            client.set(imageID, progress);
           }
-        }
-        const imageSettings = {
-          mode: request.payload.mode,
-          outputfilename: request.payload.outputfilename,
-          pathToSource: pathToSource,
-          output: pathToDir + imageID,
-        };
-        console.log();
-        const command = commandConstructor(imageSettings);
-        console.log(command);
-        //
-        // Generate a uuid, reply with that uuid
-        // Run the command with that uuid as a filename
-        //
-        child_process
-          .exec(command.command, function(error, stdout, stderr) {
-            //
-            // Process is complete, insert into DB based on uuid
-            // Then update redis to indicate this
-            //
-            if (error) {
-              console.error(`exec error: ${error}`);
-            }
-            var yoursvg;
-            yoursvg = stdout.substring(
-              stdout.indexOf('<svg'),
-              stdout.indexOf('</svg>') + 6
-            );
-            if (stderr) {
-              console.log(`stderr: ${stderr}`);
-            }
-            // const response = h.response(yoursvg);
-            // response.type('image/svg+xml');
-            // return response;
-            const dbImageShape = {
-              name: outputName(request.payload.outputfilename),
-              id: imageID,
-            };
-            dbService.addImage(dbImageShape);
-          })
-          .stdout.on('data', function(data) {
-            //
-            // While process is running update progress on redis
-            //
-            const currentStep = parseInt(data.slice(0, data.indexOf(':')));
-            // console.log(currentStep);
-            // console.log(``);
-            //
-            //
-            // TODO change it so it doesn't undo setting it to 1
-            //
-            console.log(
-              `currentStep: ${currentStep}\nshapes: ${command.shapes}`
-            );
-            const progress = isNaN(currentStep)
-              ? 0
-              : currentStep / command.shapes;
-            console.log(progress);
-            if (!isNaN(currentStep)) {
-              if (progress > 100) {
-                console.log('\n\nprogress is over 100 \n\n');
-              }
-              client.set(imageID, progress);
-            }
-          });
-        client.set(imageID, 0, function() {
-          resolve(h.response({ uploadID: imageID }));
+        })
+        .on('error', function(error) {
+          console.error(error);
+        })
+        .on('close', function(data) {
+          const dbImageShape = {
+            name: request.payload.outputfilename,
+            id: imageID,
+          };
+          dbService.addImage(dbImageShape);
         });
-      });
-    });
+      await setAsync(imageID, 0);
+      return h.response({ uploadID: imageID });
+    } catch (e) {
+      console.error(e);
+    }
   },
   animate: async (request, h, err) => {
     console.log('\n\nanimate\n\n');
@@ -263,17 +230,18 @@ module.exports = {
     console.log(request.payload);
     dbService.addImage(dbImageShape);
     const framePromises = Array.from(request.payload.animationFrames, function(
-      frame,
+      imageSettings,
       index
     ) {
       console.log('before replication');
-      frame['frameNumber'] = index;
-      frame['outputfilename'] = 'frame' + index;
-      frame['pathToSource'] = pathToSource + '/' + imageID;
-      frame['pathToOutput'] = pathToFile + 'frames';
-      frame['output'] = pathToFile + 'frames/frame' + index;
+      imageSettings['frameNumber'] = index;
+      imageSettings['outputfilename'] = 'frame' + index;
+      imageSettings['pathToSource'] = pathToSource + '/' + imageID;
+      imageSettings['pathToOutput'] = pathToFile + 'frames';
+      imageSettings['output'] = pathToFile + 'frames/frame' + index;
+      const command = commandConstructor(imageSettings);
       return new Promise((resolve, reject) => {
-        replicate(frame)
+        replicate(command.command, imageSettings)
           .stdout.on('data', function(data) {
             //
             // While process is running update progress on redis
@@ -287,10 +255,10 @@ module.exports = {
             // );
             const progress = isNaN(currentStep)
               ? 0
-              : currentStep / frame.frameNumber;
+              : currentStep / imageSettings.frameNumber;
             console.log(
               'frame number is ' +
-                frame.frameNumber +
+                imageSettings.frameNumber +
                 ' | progress is ' +
                 progress
             );
@@ -298,7 +266,7 @@ module.exports = {
               if (progress > 100) {
                 console.log('\n\nprogress is over 100 \n\n');
               }
-              client.set(frame.output, progress);
+              client.set(imageSettings.output, progress);
             }
           })
           .on('error', reject)

@@ -2,6 +2,7 @@ const uuidv4 = require('uuid/v4');
 const child_process = require('child_process');
 module.exports = {
   commandConstructor: settings => {
+    console.log(settings);
     class command {
       constructor(imageSettingsObject) {
         const imageID = uuidv4();
@@ -12,6 +13,7 @@ module.exports = {
         defaults.mode = 1;
         defaults.name = 'Your Picture';
         function numShapes(numberOfShapes) {
+          console.log(`numberOfShapes is ${numberOfShapes}`);
           if (
             typeof parseInt(numberOfShapes) === 'number' &&
             numberOfShapes < 10000
@@ -63,7 +65,8 @@ module.exports = {
         if (settings.frameNumber) {
           frameNumber = `frame${settings.frameNumber}`;
         }
-        this.shapes = numShapes(settings.numberOfShapes);
+        this.shapes = numShapes(imageSettingsObject.numofshapes);
+        console.log(this.shapes);
         // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
         // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
         //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
@@ -77,10 +80,10 @@ module.exports = {
     }
     return new command(settings);
   },
-  replicate: imageSettings => {
-    const command = module.exports.commandConstructor(imageSettings);
+  replicate: (command, imageSettings) => {
+    console.log('Replicate function running');
     console.log(command);
-    return child_process.exec(command.command, function(error, stdout, stderr) {
+    return child_process.exec(command, function(error, stdout, stderr) {
       //
       // Process is complete, insert into DB based on uuid
       // Then update redis to indicate this
