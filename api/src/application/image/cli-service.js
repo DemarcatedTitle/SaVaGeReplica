@@ -69,8 +69,8 @@ module.exports = {
         //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
         //   settings.mode
         // )} -v -o ${pathToOutput()}/${outputName()}.svg`;
-        this.command = `foglemanPrimitive -i ${pathToSource()} -n ${this
-          .shapes || 5} -rep ${rep(settings.rep) || 5} -m ${mode(
+        this.command = `primitive -i ${pathToSource()} -n ${this.shapes ||
+          5} -rep ${rep(settings.rep) || 5} -m ${mode(
           settings.mode
         )} -v -o ${settings.output}.svg`;
       }

@@ -1,7 +1,7 @@
-# FROM golang:1.9 as build
+FROM golang:1.9 as build
 
-# RUN go-wrapper download github.com/fogleman/primitive
-# RUN go-wrapper install github.com/fogleman/primitive
+RUN go-wrapper download github.com/fogleman/primitive
+RUN go-wrapper install github.com/fogleman/primitive
 
 FROM node:8-alpine
 
@@ -15,7 +15,7 @@ COPY $PACKAGE_PATH/package-lock.json $WORKING_DIR/package-lock.json
 RUN npm install -g -s --no-progress yarn && \
     yarn 
 
-# COPY . /src
-# COPY --from=build /go/bin /bin
+COPY . /src
+COPY --from=build /go/bin /bin
 
 VOLUME $WORKING_DIR/node_modules
