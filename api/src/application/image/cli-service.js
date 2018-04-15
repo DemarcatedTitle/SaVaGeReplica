@@ -65,7 +65,8 @@ module.exports = {
         if (settings.frameNumber) {
           frameNumber = `frame${settings.frameNumber}`;
         }
-        this.shapes = numShapes(imageSettingsObject.numofshapes);
+        this.shapes = numShapes(imageSettingsObject.numberOfShapes);
+        this.imageID = imageSettingsObject.imageID;
         console.log(this.shapes);
         // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
         // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
