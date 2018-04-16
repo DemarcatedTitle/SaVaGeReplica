@@ -13,11 +13,7 @@ module.exports = {
         defaults.mode = 1;
         defaults.name = 'Your Picture';
         function numShapes(numberOfShapes) {
-          console.log(`numberOfShapes is ${numberOfShapes}`);
-          if (
-            typeof parseInt(numberOfShapes) === 'number' &&
-            numberOfShapes < 10000
-          ) {
+          if (numberOfShapes && numberOfShapes < 10000) {
             return numberOfShapes;
           } else {
             return defaults.numberOfShapes;
@@ -61,13 +57,10 @@ module.exports = {
             return './src/application/image/images/';
           }
         }
-        let frameNumber = '';
-        if (settings.frameNumber) {
-          frameNumber = `frame${settings.frameNumber}`;
-        }
+        const frameNumber = `frame${settings.frameNumber}`;
         this.shapes = numShapes(imageSettingsObject.numberOfShapes);
         this.imageID = imageSettingsObject.imageID;
-        console.log(this.shapes);
+        this.frameNumber = frameNumber;
         // Why did I put a frameNumber in the command? Maybe keep around until I figure that out.
         // const command = `foglemanPrimitive -i ${pathToSource()}${frameNumber} -n ${shapes ||
         //   50} -rep ${rep(settings.rep) || 50} -m ${mode(
@@ -82,8 +75,6 @@ module.exports = {
     return new command(settings);
   },
   replicate: (command, imageSettings) => {
-    console.log('Replicate function running');
-    console.log(command);
     return child_process.exec(command, function(error, stdout, stderr) {
       //
       // Process is complete, insert into DB based on uuid

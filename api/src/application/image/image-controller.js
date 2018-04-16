@@ -16,29 +16,33 @@ const commandConstructor = require('./cli-service.js').commandConstructor;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
 const setAsync = promisify(client.set).bind(client);
+const hsetAsync = promisify(client.hset).bind(client);
 module.exports = {
   get: (request, h, err) => {
     const uploadID = request.params.uploadID;
-    return new Promise(function(resolve) {
-      if (err) {
-        throw err;
-      }
-      client.on('error', function(err) {
-        console.log('Error ' + err);
-      });
-      return resolve(
-        redisService.getProgress(uploadID).then(progress => {
-          if (progress < 100) {
-            return { progress: progress.toString() };
-          } else if (progress === 100) {
-            console.log('get uploaded');
-            const uploadID = request.params.uploadID;
-            let pathToFile = `src/application/image/images/${uploadID}.svg`;
-            return h.file(pathToFile);
-          }
-        })
-      );
+    if (err) {
+      throw err;
+    }
+    client.on('error', function(err) {
+      console.log('Error ' + err);
     });
+    return redisService
+      .getProgress(uploadID)
+      .then(progress => {
+        console.log(progress);
+        if (progress < 100) {
+          return { progress: progress.toString() };
+        } else if (progress === 100) {
+          console.log('get uploaded');
+          const uploadID = request.params.uploadID;
+          let pathToFile = `src/application/image/images/${uploadID}.svg`;
+          return h.file(pathToFile);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        throw Boom.notFound();
+      });
   },
 
   deleteImage: async (request, h, err) => {
@@ -112,7 +116,7 @@ module.exports = {
           };
           dbService.addImage(dbImageShape);
         });
-      await setAsync(imageID, 0);
+      // await setAsync(imageID, 0);
       return h.response({ uploadID: imageID });
     } catch (e) {
       console.error(e);
@@ -155,9 +159,10 @@ module.exports = {
           .on('close', resolve);
       });
     });
+    await hsetAsync(imageID, 'frame0', 0).catch(err => console.error(err));
+    // await setAsync(imageID, 0);
     Promise.all(framePromises)
       .then(values => {
-        console.log(values);
         animateTask(pathToFrames, pathToFile);
       })
       .catch(err => {
@@ -166,7 +171,7 @@ module.exports = {
         console.log('Catch error\n');
       });
 
-    return 'STRING';
+    return h.response({ uploadID: imageID });
   },
 };
 
