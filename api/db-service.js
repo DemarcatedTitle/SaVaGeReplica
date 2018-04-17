@@ -34,7 +34,7 @@ exports.addImage = function addImage(imageObject) {
 };
 exports.getImageData = function getImage(imageID) {
   var getQuery = knex
-    .select('id', 'filetype', 'name')
+    .select('*')
     .from('image_references')
     .where('id', '=', imageID);
   console.log('\n\n' + getQuery.toString() + '\n\n');

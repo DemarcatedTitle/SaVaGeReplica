@@ -9,6 +9,9 @@ const config = {
       },
       layout: 'horizontal',
     },
+    view: {
+      bust: false,
+    },
   },
 };
 exports.animate = (path, out, imageId) => {

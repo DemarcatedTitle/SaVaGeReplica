@@ -18,7 +18,7 @@ var redis = require('redis'),
 const setAsync = promisify(client.set).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
 module.exports = {
-  get: (request, h, err) => {
+  get: async (request, h, err) => {
     const uploadID = request.params.uploadID;
     if (err) {
       throw err;
@@ -26,23 +26,30 @@ module.exports = {
     client.on('error', function(err) {
       console.log('Error ' + err);
     });
-    return redisService
-      .getProgress(uploadID)
-      .then(progress => {
-        console.log(progress);
-        if (progress < 100) {
-          return { progress: progress.toString() };
-        } else if (progress === 100) {
-          console.log('get uploaded');
-          const uploadID = request.params.uploadID;
-          let pathToFile = `src/application/image/images/${uploadID}.svg`;
-          return h.file(pathToFile);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        throw Boom.notFound();
-      });
+    const progress = await redisService.getProgress(uploadID).catch(err => {
+      console.error(err);
+      throw Boom.notFound();
+    });
+    if (progress < 100) {
+      return { progress: progress.toString() };
+    } else if (progress === 100) {
+      const uploadID = request.params.uploadID;
+      const imageData = await dbService.getImageData(uploadID)[0];
+      console.log(imageData);
+      if (imageData.type === 'animation') {
+        let pathToFile = `src/application/image/images/${uploadID}/view/svg/sprite.view.svg`;
+        return h.file(pathToFile);
+      }
+      console.log('get uploaded');
+      let pathToFile = `src/application/image/images/${uploadID}.svg`;
+      return h.file(pathToFile);
+    }
+
+    // return redisService
+    //   .getProgress(uploadID)
+    //   .then(progress => {
+    //     console.log(progress);
+    //   })
   },
 
   deleteImage: async (request, h, err) => {
@@ -131,9 +138,7 @@ module.exports = {
     await mkdir(pathToFile)
       .then(val => mkdir(pathToSource))
       .then(val => mkdir(pathToFrames))
-      .then(val =>
-        writeFile(pathToSource + '/' + imageID, request.payload.image)
-      )
+      .then(val => writeFile(pathToSource + '/' + imageID, request.payload.image))
       .catch(error => console.error(error));
     const dbImageShape = {
       name: request.payload.animationInformation.filename,
@@ -141,10 +146,7 @@ module.exports = {
       type: 'animation',
     };
     dbService.addImage(dbImageShape);
-    const framePromises = Array.from(request.payload.animationFrames, function(
-      imageSettings,
-      index
-    ) {
+    const framePromises = Array.from(request.payload.animationFrames, function(imageSettings, index) {
       imageSettings['frameNumber'] = index;
       imageSettings['outputfilename'] = 'frame' + index;
       imageSettings['pathToSource'] = pathToSource + '/' + imageID;
@@ -163,7 +165,9 @@ module.exports = {
     // await setAsync(imageID, 0);
     Promise.all(framePromises)
       .then(values => {
-        animateTask(pathToFrames, pathToFile);
+        animateTask(pathToFrames, pathToFile).on('end', function(){
+          console.log('\n\nThe animate task has ended\n\n');
+        });
       })
       .catch(err => {
         console.log('Catch error\n');

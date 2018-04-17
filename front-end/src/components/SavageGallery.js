@@ -3,7 +3,7 @@ import { GridList, GridTile } from 'material-ui/GridList';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-const image = require('../sprite.css-4272fb9d.svg');
+// const image = require('../sprite.css-4272fb9d.svg');
 export default class SavageGallery extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -103,12 +103,6 @@ export default class SavageGallery extends React.PureComponent {
                   }}
                 >
                   <div className="backdrop" style={backdropstyle}>
-                    <embed
-                      style={animationboxstyle}
-                      className="animationbox"
-                      type="image/svg+xml"
-                      src={image}
-                    />
                   </div>
                 </GridTile>
               );
