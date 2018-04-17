@@ -17,23 +17,20 @@ export const fetchProgress = function fetchProgress(payload) {
               .then(data => {
                 console.log(data);
                 const progress = data.progress;
-                if (isNaN(progress)) {
-                } else if (progress < 100) {
-                  console.log('setTimeout');
-                  setTimeout(
-                    (dispatch, payload) => {
-                      console.log(
-                        `setTimeout payload is ${JSON.stringify(
-                          payload.get('uploadID')
-                        )}`
-                      );
-                      dispatch(fetchProgress(payload));
-                    },
-                    2000,
-                    dispatch,
-                    payload
-                  );
-                }
+                console.log('setTimeout');
+                setTimeout(
+                  (dispatch, payload) => {
+                    console.log(
+                      `setTimeout payload is ${JSON.stringify(
+                        payload.get('uploadID')
+                      )}`
+                    );
+                    dispatch(fetchProgress(payload));
+                  },
+                  2000,
+                  dispatch,
+                  payload
+                );
                 return dispatch({
                   type: 'PROGRESS_CHECKED',
                   progress: progress,
