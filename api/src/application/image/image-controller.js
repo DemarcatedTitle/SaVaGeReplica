@@ -15,7 +15,6 @@ const animateTask = require('./gulp-service.js').animate;
 const commandConstructor = require('./cli-service.js').commandConstructor;
 var redis = require('redis'),
   client = redis.createClient(6379, 'redis');
-const setAsync = promisify(client.set).bind(client);
 const hsetAsync = promisify(client.hset).bind(client);
 module.exports = {
   get: async (request, h, err) => {
@@ -23,9 +22,6 @@ module.exports = {
     if (err) {
       throw err;
     }
-    client.on('error', function(err) {
-      console.log('Error ' + err);
-    });
     const progress = await redisService.getProgress(uploadID).catch(err => {
       console.error(err);
       throw Boom.notFound();
@@ -34,22 +30,20 @@ module.exports = {
       return { progress: progress.toString() };
     } else if (progress === 100) {
       const uploadID = request.params.uploadID;
-      const imageData = await dbService.getImageData(uploadID)[0];
+      const imageData = await dbService.getImageData(uploadID);
       console.log(imageData);
-      if (imageData.type === 'animation') {
-        let pathToFile = `src/application/image/images/${uploadID}/view/svg/sprite.view.svg`;
+      if (imageData.type === null) {
+        let pathToFile = `src/application/image/images/${uploadID}.svg`;
         return h.file(pathToFile);
+      } else if (imageData[0].type === 'animation') {
+        let pathToFile = `src/application/image/images/${uploadID}/view/svg/sprite.view.svg`;
+        console.log(pathToFile);
+        return h.file(pathToFile);
+      } else {
+        console.log(imageData);
+        return Boom.notFound();
       }
-      console.log('get uploaded');
-      let pathToFile = `src/application/image/images/${uploadID}.svg`;
-      return h.file(pathToFile);
     }
-
-    // return redisService
-    //   .getProgress(uploadID)
-    //   .then(progress => {
-    //     console.log(progress);
-    //   })
   },
 
   deleteImage: async (request, h, err) => {
@@ -74,21 +68,12 @@ module.exports = {
     return h.response('Okay');
   },
   getUploaded: (request, h, err) => {
-    console.log('get uploaded');
     const uploadID = request.params.uploadID;
     let pathToFile = `src/application/image/images/${uploadID}.svg`;
     return h.file(pathToFile);
   },
-  getAll: (request, h, err) => {
-    return new Promise(function(resolve) {
-      dbService
-        .getAllImages()
-        .then(allImages => {
-          console.log(allImages);
-          resolve(h.response(allImages));
-        })
-        .catch(err => console.log(err));
-    });
+  getAll: async (request, h, err) => {
+    return h.response(await dbService.getAllImages());
   },
   uploadImage: async function(request, h, err) {
     try {
@@ -123,7 +108,7 @@ module.exports = {
           };
           dbService.addImage(dbImageShape);
         });
-      // await setAsync(imageID, 0);
+      await hsetAsync(imageID, 'frame0', 0).catch(err => console.error(err));
       return h.response({ uploadID: imageID });
     } catch (e) {
       console.error(e);
@@ -135,18 +120,20 @@ module.exports = {
     const pathToFile = './src/application/image/images/' + imageID + '/';
     const pathToSource = pathToFile + 'uploaded';
     const pathToFrames = pathToFile + 'frames';
-    await mkdir(pathToFile)
-      .then(val => mkdir(pathToSource))
-      .then(val => mkdir(pathToFrames))
-      .then(val => writeFile(pathToSource + '/' + imageID, request.payload.image))
-      .catch(error => console.error(error));
+    await mkdir(pathToFile);
+    await mkdir(pathToSource);
+    await mkdir(pathToFrames);
+    await writeFile(pathToSource + '/' + imageID, request.payload.image);
     const dbImageShape = {
       name: request.payload.animationInformation.filename,
       id: imageID,
       type: 'animation',
     };
-    dbService.addImage(dbImageShape);
-    const framePromises = Array.from(request.payload.animationFrames, function(imageSettings, index) {
+    await dbService.addImage(dbImageShape);
+    const framePromises = Array.from(request.payload.animationFrames, function(
+      imageSettings,
+      index
+    ) {
       imageSettings['frameNumber'] = index;
       imageSettings['outputfilename'] = 'frame' + index;
       imageSettings['pathToSource'] = pathToSource + '/' + imageID;
@@ -162,18 +149,11 @@ module.exports = {
       });
     });
     await hsetAsync(imageID, 'frame0', 0).catch(err => console.error(err));
-    // await setAsync(imageID, 0);
-    Promise.all(framePromises)
-      .then(values => {
-        animateTask(pathToFrames, pathToFile).on('end', function(){
-          console.log('\n\nThe animate task has ended\n\n');
-        });
-      })
-      .catch(err => {
-        console.log('Catch error\n');
-        console.error(err);
-        console.log('Catch error\n');
-      });
+    animateTask(pathToFrames, pathToFile).on('end', function() {
+      console.log('\n\nThe animate task has ended\n\n');
+    });
+
+    await Promise.all(framePromises);
 
     return h.response({ uploadID: imageID });
   },

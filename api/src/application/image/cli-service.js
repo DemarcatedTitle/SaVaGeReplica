@@ -7,6 +7,7 @@ module.exports = {
       constructor(imageSettingsObject) {
         const imageID = uuidv4();
         let defaults = {};
+        defaults.frameNumber = 0;
         defaults.numberOfShapes = 2;
         defaults.rep = 0;
         defaults.nth = 0;
@@ -57,7 +58,9 @@ module.exports = {
             return './src/application/image/images/';
           }
         }
-        const frameNumber = `frame${settings.frameNumber}`;
+        const frameNumber = `frame${settings.frameNumber
+          ? settings.frameNumber
+          : 0}`;
         this.shapes = numShapes(imageSettingsObject.numberOfShapes);
         this.imageID = imageSettingsObject.imageID;
         this.frameNumber = frameNumber;
