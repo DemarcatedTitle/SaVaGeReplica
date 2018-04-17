@@ -4,6 +4,7 @@ var redis = require('redis'),
 const hsetAsync = promisify(client.hset).bind(client);
 const getAsync = promisify(client.get).bind(client);
 const hgetallAsync = promisify(client.hgetall).bind(client);
+const hgetAsync = promisify(client.hget).bind(client);
 
 module.exports.logProgress = command => data => {
   //
@@ -13,18 +14,7 @@ module.exports.logProgress = command => data => {
   // TODO change it so it doesn't undo setting it to 1
   //
   const progress = isNaN(currentStep) ? 0 : currentStep / command.shapes;
-  console.log(
-    `currentStep is: ${currentStep}\ncommand.shapes is ${command.shapes}`
-  );
   if (!isNaN(currentStep)) {
-    console.log(data.slice(0, data.indexOf(':')));
-    if (progress > 100) {
-      // console.log('\n\nprogress is over 100 \n\n');
-      // console.log(`progress is ${progress}`);
-    }
-    // console.log(
-    //   `command.imageID is ${command.imageID}\ncommand.framenumber is ${command.frameNumber}`
-    // );
     return hsetAsync(
       command.imageID,
       command.frameNumber,
@@ -34,26 +24,37 @@ module.exports.logProgress = command => data => {
     return { progress: progress.toString() };
   }
 };
+
+module.exports.logAnimated = uploadID => {
+    return hsetAsync(
+      uploadID,
+      'animated',
+      true
+    ).catch(err => console.error(err));
+}
+module.exports.getAnimated = uploadID => {
+    return hgetAsync(uploadID, 'animated').catch(err => console.error(err));
+}
+
 module.exports.getProgress = uploadID => {
-  console.log(`\ngetprogress uploadID is \n${uploadID}`);
   return hgetallAsync(uploadID)
     .then(progress => {
-      console.log(`Progress is: `);
-      console.log(progress);
       if (progress !== null) {
+        if (progress.animated === 'true') {
+          return 100
+        }
         const progressArray = Object.entries(progress);
-        console.log(progressArray);
 
         const totalPercent = progressArray.reduce((accumulator, frame) => {
-          const percent = parseInt(frame[1] * 100);
-          console.log(percent);
-          return accumulator + percent;
+          if (frame[0].slice(0, 5) === 'frame') {
+            const percent = parseInt(frame[1] * 100);
+            return accumulator + percent;
+          } else {
+            return accumulator;
+          }
         }, 0);
 
         const averagePercent = totalPercent / progressArray.length;
-        console.log(
-          `totalPercent is ${totalPercent}\naveragePercent is ${averagePercent}`
-        );
 
         return averagePercent;
       } else {

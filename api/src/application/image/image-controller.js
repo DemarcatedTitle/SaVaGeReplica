@@ -26,21 +26,30 @@ module.exports = {
       console.error(err);
       throw Boom.notFound();
     });
+    console.log(`\n\nget progress is ${progress}`);
     if (progress < 100) {
       return { progress: progress.toString() };
     } else if (progress === 100) {
       const uploadID = request.params.uploadID;
       const imageData = await dbService.getImageData(uploadID);
       console.log(imageData);
-      if (imageData.type === null) {
+      if (imageData[0].type === null) {
         let pathToFile = `src/application/image/images/${uploadID}.svg`;
         return h.file(pathToFile);
       } else if (imageData[0].type === 'animation') {
         let pathToFile = `src/application/image/images/${uploadID}/view/svg/sprite.view.svg`;
+        // Add special animated redis log
         console.log(pathToFile);
-        return h.file(pathToFile);
+        const animated = await redisService.getAnimated(uploadID);
+          console.log(animated);
+        if (animated === 'true') {
+          return h.file(pathToFile);
+        }
+        else {
+          return { progress: progress.toString() };
+        }
       } else {
-        console.log(imageData);
+        console.error(new Error());
         return Boom.notFound();
       }
     }
@@ -64,7 +73,6 @@ module.exports = {
     } else {
       return Boom.notFound();
     }
-    console.log('Delete');
     return h.response('Okay');
   },
   getUploaded: (request, h, err) => {
@@ -149,11 +157,12 @@ module.exports = {
       });
     });
     await hsetAsync(imageID, 'frame0', 0).catch(err => console.error(err));
-    animateTask(pathToFrames, pathToFile).on('end', function() {
-      console.log('\n\nThe animate task has ended\n\n');
+    Promise.all(framePromises).then(val=>{
+      return animateTask(pathToFrames, pathToFile).on('end', function() {
+        console.log('\n\nThe animate task has ended\n\n');
+        redisService.logAnimated(imageID)
+      });
     });
-
-    await Promise.all(framePromises);
 
     return h.response({ uploadID: imageID });
   },
