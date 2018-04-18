@@ -8,6 +8,9 @@ import AnimatorContainer from './containers/AnimatorContainer.js';
 import Drawer from 'material-ui/Drawer';
 import { NavLink } from 'react-router-dom';
 import MenuItem from 'material-ui/MenuItem';
+import { store } from './index';
+
+import { ROUTE_CHANGE } from './actions/routeChange';
 
 class App extends React.Component {
   constructor(props) {
@@ -22,6 +25,17 @@ class App extends React.Component {
   handleClose() {
     this.setState({ open: false });
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    const  prevPage  = prevProps.match.params.page;
+    const currentPage = this.props.match.params.page;
+
+    if (prevPage !== currentPage) {
+      store.dispatch(ROUTE_CHANGE);
+    }
+
+  }
+
   render() {
     // ${providerDomain}/op/auth
     // ?client_id=${clientId}

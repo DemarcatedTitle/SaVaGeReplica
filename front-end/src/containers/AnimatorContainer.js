@@ -13,7 +13,6 @@ import {
 import Animator from '../components/Animator.js';
 
 const mapStateToProps = state => {
-  console.log(state);
   const text = state.textApp.slice(-1)[0] ? state.textApp.slice(-1)[0] : {};
   const resultImage = state.resultImage.slice(-1)[0]
     ? state.resultImage.slice(-1)[0]
@@ -23,7 +22,7 @@ const mapStateToProps = state => {
     ? parseInt(state.progress.slice(-1)[0].progress, 10)
     : '';
   if (progress === undefined) {
-    console.log('\n\n\nprogress is undefined\n\n\n');
+    console.error('\n\n\nprogress is undefined\n\n\n');
   }
   const isFetching = state.progress.slice(-1)[0]
     ? state.progress.slice(-1)[0].isFetching

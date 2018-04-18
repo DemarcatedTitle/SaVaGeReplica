@@ -1,3 +1,4 @@
+import { ROUTE_CHANGE } from '../actions/routeChange.js';
 const progress = (
   state = [{ progress: 0, fetching: false, imgurl: '' }],
   action
@@ -25,6 +26,10 @@ const progress = (
       newState['imgurl'] = action.imgurl;
       return [...state, newState];
     case 'UPLOAD_SUCCEEDED':
+      newState['imgurl'] = '';
+      newState['progress'] = 0;
+      return [...state, newState];
+    case 'ROUTE_CHANGE':
       newState['imgurl'] = '';
       newState['progress'] = 0;
       return [...state, newState];

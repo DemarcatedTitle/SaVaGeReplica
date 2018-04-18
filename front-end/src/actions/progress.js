@@ -1,8 +1,6 @@
 export const fetchProgress = function fetchProgress(payload) {
-  console.log(`fetchProgress payload is ${JSON.stringify(payload)}`);
   const path = `/image/${payload.get('uploadID')}`;
   return function(dispatch) {
-    console.log('fetchProgress');
     dispatch({ type: 'PROGRESS_STARTED' });
     return fetch(path, {
       method: 'GET',
@@ -15,16 +13,9 @@ export const fetchProgress = function fetchProgress(payload) {
             response
               .json()
               .then(data => {
-                console.log(data);
                 const progress = data.progress;
-                console.log('setTimeout');
                 setTimeout(
                   (dispatch, payload) => {
-                    console.log(
-                      `setTimeout payload is ${JSON.stringify(
-                        payload.get('uploadID')
-                      )}`
-                    );
                     dispatch(fetchProgress(payload));
                   },
                   2000,
@@ -41,7 +32,6 @@ export const fetchProgress = function fetchProgress(payload) {
             response
               .blob()
               .then(data => {
-                console.log("It's an image");
                 const imgurl = URL.createObjectURL(data);
                 dispatch({ type: 'RECEIVED_IMAGE', imgurl: imgurl });
               })

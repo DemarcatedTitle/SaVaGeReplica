@@ -69,11 +69,11 @@ export default class Animator extends React.Component {
   }
   uploadImage() {
     var data = new FormData();
-    Object.entries(this.props.text).forEach(function(field) {
-      if (field[1]) {
-        data.append(field[1].id, field[1].value);
-      }
-    });
+    // Object.entries(this.props.text).forEach(function(field) {
+    //   if (field[1]) {
+    //     data.append(field[1].id, field[1].value);
+    //   }
+    // });
     const animationUpload = [
       this.state.accepted[0],
       this.state.accepted[0].name,
@@ -90,7 +90,6 @@ export default class Animator extends React.Component {
         backgroundcolor: frame.get('backgroundcolor'),
       };
     });
-    console.log(typeof animationInformation);
     data.append('animationInformation', JSON.stringify(animationInformation));
     data.append('animationFrames', JSON.stringify(animationFrames));
     data.append('image', this.state.accepted[0]);
