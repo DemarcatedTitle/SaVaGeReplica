@@ -4,13 +4,11 @@ var svgSprite = require('gulp-svg-sprite');
 const config = {
   mode: {
     css: {
+      bust: false,
       render: {
         css: true,
       },
       layout: 'horizontal',
-    },
-    view: {
-      bust: false,
     },
   },
 };

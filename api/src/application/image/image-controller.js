@@ -37,15 +37,12 @@ module.exports = {
         let pathToFile = `src/application/image/images/${uploadID}.svg`;
         return h.file(pathToFile);
       } else if (imageData[0].type === 'animation') {
-        let pathToFile = `src/application/image/images/${uploadID}/view/svg/sprite.view.svg`;
+        let pathToFile = `src/application/image/images/${uploadID}/css/svg/sprite.css.svg`;
         // Add special animated redis log
-        console.log(pathToFile);
         const animated = await redisService.getAnimated(uploadID);
-          console.log(animated);
         if (animated === 'true') {
           return h.file(pathToFile);
-        }
-        else {
+        } else {
           return { progress: progress.toString() };
         }
       } else {
@@ -138,10 +135,7 @@ module.exports = {
       type: 'animation',
     };
     await dbService.addImage(dbImageShape);
-    const framePromises = Array.from(request.payload.animationFrames, function(
-      imageSettings,
-      index
-    ) {
+    const framePromises = Array.from(request.payload.animationFrames, function(imageSettings, index) {
       imageSettings['frameNumber'] = index;
       imageSettings['outputfilename'] = 'frame' + index;
       imageSettings['pathToSource'] = pathToSource + '/' + imageID;
@@ -157,10 +151,10 @@ module.exports = {
       });
     });
     await hsetAsync(imageID, 'frame0', 0).catch(err => console.error(err));
-    Promise.all(framePromises).then(val=>{
+    Promise.all(framePromises).then(val => {
       return animateTask(pathToFrames, pathToFile).on('end', function() {
         console.log('\n\nThe animate task has ended\n\n');
-        redisService.logAnimated(imageID)
+        redisService.logAnimated(imageID);
       });
     });
 
