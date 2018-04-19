@@ -185,9 +185,12 @@ export default class Animator extends React.Component {
                   />
                 ) : (
                   <ResultCard
+                    dispatchFrameCount={this.props.dispatchFrameCount}
+                    imageID={this.props.resultImage.uploadID}
                     imgurl={this.props.imgurl}
                     loading={this.props.resultImage.loading}
                     progress={this.props.progress}
+                    frameCount={this.props.frameCount}
                   />
                 )}
                 <RaisedButton

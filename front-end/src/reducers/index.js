@@ -6,6 +6,7 @@ import resultImage from './resultImage';
 import progress from './progress';
 import allImages from './getAllImages';
 import deleteImage from './deleteImage';
+import frameCount from './frameCount';
 const TextApp = combineReducers({
   textApp,
   animator,
@@ -14,6 +15,7 @@ const TextApp = combineReducers({
   progress,
   allImages,
   deleteImage,
+  frameCount,
   animationInformation,
 });
 

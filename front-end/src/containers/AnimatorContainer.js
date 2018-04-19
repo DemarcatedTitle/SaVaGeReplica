@@ -6,6 +6,7 @@ import {
   VALUE_CHANGED,
 } from '../actions/animator';
 import { fetchProgress } from '../actions/progress';
+import { setFrameCount } from '../actions/frameCount';
 import {
   uploadImageToAnimate,
   animationInformationChange,
@@ -33,11 +34,14 @@ const mapStateToProps = state => {
   const animator = state.animator.slice(-1)[0]
     ? state.animator.slice(-1)[0]
     : '';
+  const frameCount = state.frameCount.slice(-1)[0];
   const animationInformation = state.animationInformation.slice(-1)[0];
+
 
   return {
     animator: animator,
     frames: animator,
+    frameCount: frameCount,
     text: text,
     loading: loading,
     resultImage: resultImage,
@@ -66,6 +70,9 @@ const mapDispatchToProps = dispatch => {
     },
     fetchProgress: payload => {
       dispatch(fetchProgress(payload));
+    },
+    dispatchFrameCount: payload => {
+      dispatch(setFrameCount(payload));
     },
   };
 };

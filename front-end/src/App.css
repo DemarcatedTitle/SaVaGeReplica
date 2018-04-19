@@ -73,8 +73,8 @@ img {
   max-width: 30vw;
 }
 .outputCard {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
 }
 
 form {
