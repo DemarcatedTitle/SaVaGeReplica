@@ -18,36 +18,38 @@ var redis = require('redis'),
 const hsetAsync = promisify(client.hset).bind(client);
 module.exports = {
   get: async (request, h, err) => {
+    console.log('get Ran');
     const uploadID = request.params.uploadID;
     if (err) {
       throw err;
     }
-    const progress = await redisService.getProgress(uploadID).catch(err => {
+    // Represents primitive still being in progress
+    const frameGenerationProgress = await redisService.getProgress(uploadID).catch(err => {
       console.error(err);
       throw Boom.notFound();
     });
-    console.log(`\n\nget progress is ${progress}`);
-    if (progress < 100) {
-      return { progress: progress.toString() };
-    } else if (progress === 100) {
+    console.log(`\n\nget progress is ${frameGenerationProgress}`);
+    if (frameGenerationProgress < 100) {
+      return { progress: frameGenerationProgress.toString() };
+    } else if (frameGenerationProgress === 100) {
       const imageData = await dbService.getImageData(uploadID);
-      console.log(imageData);
       if (imageData[0].type === null) {
-        let pathToFile = `src/application/image/images/${uploadID}.svg`;
-        return h.file(pathToFile);
+        return { progress: frameGenerationProgress.toString() };
       } else if (imageData[0].type === 'animation') {
-        let pathToFile = `src/application/image/images/${uploadID}/css/svg/sprite.css.svg`;
-        // Add special animated redis log
+
+        // Checks to see if the svgs have been processed by the gulp utility
         const animated = await redisService.getAnimated(uploadID);
         if (animated === 'true') {
-          return h.file(pathToFile);
-        } else {
-          return { progress: progress.toString() };
+          return { progress: frameGenerationProgress.toString() };
         }
       } else {
-        console.error(new Error());
+        console.error('line 45');
         return Boom.notFound();
       }
+
+      // Currently unknown if gulp svg utility has something that can be used for this.
+      const totalProgress = 99;
+      return { progress: totalProgress.toString() };
     }
   },
 
@@ -71,10 +73,18 @@ module.exports = {
     }
     return h.response('Okay');
   },
-  getUploaded: (request, h, err) => {
+  getUploaded: async (request, h, err) => {
+    console.log('get uploaded ran');
     const uploadID = request.params.uploadID;
-    let pathToFile = `src/application/image/images/${uploadID}.svg`;
-    return h.file(pathToFile);
+    const imageData = await dbService.getImageData(uploadID);
+    const imageReference = imageData[0];
+    if (imageReference.type === null) {
+      const pathToFile = `src/application/image/images/${uploadID}.svg`;
+      return h.file(pathToFile);
+    } else if (imageReference.type === 'animation') {
+      const pathToFile = `src/application/image/images/${uploadID}/css/svg/sprite.css.svg`;
+      return h.file(pathToFile);
+    }
   },
   getAll: async (request, h, err) => {
     return h.response(await dbService.getAllImages());
