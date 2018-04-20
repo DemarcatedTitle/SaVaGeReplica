@@ -16,34 +16,7 @@ export const fetchAllImages = function fetchAllImages() {
                 .allImages.slice(-1)[0]
                 .downloaded.includes(id.image_id);
             });
-            idsToFetch.forEach(function(image) {
-              dispatch({ type: 'IMAGE_REQUEST_STARTED' });
-              fetch('/api/image/uploaded/' + image.image_id, {
-                method: 'GET',
-                credentials: 'same-origin',
-              })
-                .then(response =>
-                  response
-                    .blob()
-                    .then(imageBlob => {
-                      const imageLocation = URL.createObjectURL(imageBlob);
-                      dispatch({
-                        type: 'IMAGE_REQUEST_SUCCESSFUL',
-                        payload: {
-                          imageLocation: imageLocation,
-                          name: image.name,
-                          id: image.image_id,
-                        },
-                      });
-                    })
-                    .catch(err => {
-                      throw err;
-                    })
-                )
-                .catch(err => {
-                  throw err;
-                });
-            });
+            idsToFetch.forEach(fetchImage(dispatch));
           });
         }
       })
@@ -51,4 +24,33 @@ export const fetchAllImages = function fetchAllImages() {
         throw error;
       });
   };
+};
+
+export const fetchImage = (dispatch) => function(image) {
+  dispatch({ type: 'IMAGE_REQUEST_STARTED' });
+  fetch('/api/image/uploaded/' + image.image_id, {
+    method: 'GET',
+    credentials: 'same-origin',
+  })
+    .then(response =>
+      response
+        .blob()
+        .then(imageBlob => {
+          const imageLocation = URL.createObjectURL(imageBlob);
+          dispatch({
+            type: 'IMAGE_REQUEST_SUCCESSFUL',
+            payload: {
+              imageLocation: imageLocation,
+              name: image.name,
+              id: image.image_id,
+            },
+          });
+        })
+        .catch(err => {
+          throw err;
+        })
+    )
+    .catch(err => {
+      throw err;
+    });
 };

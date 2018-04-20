@@ -97,6 +97,7 @@ export default class Animator extends React.Component {
     this.props.onUpload(data);
   }
   render() {
+    console.log(`this.props.imgurl is ${this.props.imgurl}`);
     const frameArr = Array.from(this.props.frames);
     return (
       <div className="columnContainer">

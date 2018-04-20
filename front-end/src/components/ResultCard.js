@@ -7,14 +7,17 @@ export default class ResultCard extends React.PureComponent {
     this.save = this.save.bind(this);
   }
   componentDidMount() {
-    const animationEmbed = document.getElementById(this.props.imgurl);
-    const dispatchFrameCount = this.props.dispatchFrameCount;
-    const imageID = this.props.imageID;
-    animationEmbed.addEventListener('load', function() {
-      const svg = animationEmbed.getSVGDocument();
-      const frameCount = svg.children[0].childElementCount;
-      dispatchFrameCount({imageID, frameCount});
-    });
+    if (this.props.imgurl && this.props.dispatchFrameCount) {
+      console.log(this.props.imgurl);
+      const animationEmbed = document.getElementById(this.props.imgurl);
+      const dispatchFrameCount = this.props.dispatchFrameCount;
+      const imageID = this.props.imageID;
+      animationEmbed.addEventListener('load', function() {
+        const svg = animationEmbed.getSVGDocument();
+        const frameCount = svg.children[0].childElementCount;
+        dispatchFrameCount({imageID, frameCount});
+      });
+    }
   }
 
   save() {
@@ -41,7 +44,7 @@ export default class ResultCard extends React.PureComponent {
       return (
         <div className="outputCard">
           <div className="backdrop" style={backdropstyle}>
-            <embed id={this.props.imgurl} style={animationboxstyle} className="animationbox" type="image/svg+xml" src={this.props.imgurl} />
+            {this.props.imgurl ? <embed id={this.props.imgurl} style={animationboxstyle} className="animationbox" type="image/svg+xml" src={this.props.imgurl} /> : null }
           </div>
           <a download="yourpicture.svg" href={this.props.imgurl}>
             <RaisedButton label="Download Image" primary={true} />

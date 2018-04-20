@@ -17,13 +17,14 @@ const progress = (
       newState['isFetching'] = false;
       return [...state, newState];
     case 'PROGRESS_COMPLETE':
-      newState['progress'] = action.progress;
+      newState['progress'] = 100;
+      newState['imgurl'] = action.payload.imageLocation;
       return [...state, newState];
     case 'PROGRESS_FAILED':
       newState['progress'] = action.progress;
       return [...state, newState];
     case 'RECEIVED_IMAGE':
-      newState['imgurl'] = action.imgurl;
+      newState['imgurl'] = action.payload.imageLocation;
       return [...state, newState];
     case 'UPLOAD_SUCCEEDED':
       newState['imgurl'] = '';

@@ -1,3 +1,4 @@
+import { fetchImageById } from './fetchImage';
 export const fetchProgress = function fetchProgress(payload) {
   const path = `/image/${payload.get('uploadID')}`;
   return function(dispatch) {
@@ -14,18 +15,18 @@ export const fetchProgress = function fetchProgress(payload) {
               .json()
               .then(data => {
                 const progress = data.progress;
-                setTimeout(
-                  (dispatch, payload) => {
-                    dispatch(fetchProgress(payload));
-                  },
-                  2000,
-                  dispatch,
-                  payload
-                );
-                return dispatch({
-                  type: 'PROGRESS_CHECKED',
-                  progress: progress,
-                });
+                if (progress < 100) {
+                  setTimeout(
+                    (dispatch, payload) => {
+                      dispatch(fetchProgress(payload));
+                    },
+                    2000,
+                    dispatch,
+                    payload
+                  );
+                } else {
+                  fetchImageById(dispatch, 'PROGRESS_COMPLETE')(payload.get('uploadID'));
+                }
               })
               .catch(err => console.log(err));
           } else if (contentType === 'image/svg+xml') {
