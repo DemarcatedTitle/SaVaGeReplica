@@ -30,7 +30,6 @@ module.exports = {
     if (progress < 100) {
       return { progress: progress.toString() };
     } else if (progress === 100) {
-      const uploadID = request.params.uploadID;
       const imageData = await dbService.getImageData(uploadID);
       console.log(imageData);
       if (imageData[0].type === null) {
