@@ -53,12 +53,19 @@ export default class TextBox extends React.Component {
   }
   uploadImage() {
     var data = new FormData();
+    const settings = {};
     Object.entries(this.props.text).forEach(function(field) {
       if (field[1]) {
-        data.append(field[1].id, field[1].value);
+        if (field[1].id !== 'outputfilename') {
+          settings[field[1].id] = field[1].value;
+        } else if (field[1].id === 'outputfilename') {
+          data.append(field[1].id, field[1].value);
+        }
       }
     });
-    data.append('mode', this.state.mode);
+    settings['mode'] = this.state.mode;
+    data.append('settings', JSON.stringify(settings));
+    // data.append('mode', this.state.mode);
     data.append('file', this.state.accepted[0]);
     data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);

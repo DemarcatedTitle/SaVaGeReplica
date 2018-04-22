@@ -23,7 +23,7 @@ module.exports = [
   {
     method: 'DELETE',
     path: '/api/image/delete/{imageId}',
-    handler: imagecontroller.deleteImage,
+    handler: imagecontroller.deleteImageById,
     // config: {
     //   tags: ['api'],
     //   description: 'An example endpoint using a controller',
@@ -61,15 +61,20 @@ module.exports = [
         maxBytes: 11457280,
       },
       validate: {
+        failAction: (request, h, err) => {
+          return err;
+        },
         payload: {
           outputfilename: Joi.string(),
-          numofshapes: Joi.number().integer(),
-          mode: Joi.number().integer(),
-          rep: Joi.number().integer(),
-          nth: Joi.number().integer(),
-          outputsize: Joi.number().integer(),
-          alpha: Joi.number().integer(),
-          backgroundcolor: Joi.number().integer(),
+          settings: {
+            numofshapes: Joi.number().integer(),
+            mode: Joi.number().integer(),
+            rep: Joi.number().integer(),
+            nth: Joi.number().integer(),
+            outputsize: Joi.number().integer(),
+            alpha: Joi.number().integer(),
+            backgroundcolor: Joi.number().integer(),
+          },
           file: Joi.binary(),
           filename: Joi.string(),
         },
@@ -131,37 +136,4 @@ module.exports = [
     },
     handler: imagecontroller.animate,
   },
-  // {
-  //   method: 'GET',
-  //   path: '/async-validation-example',
-  //   handler: (request, reply) => {
-  //     reply({ message: 'the request was valid!' });
-  //   },
-  //   config: {
-  //     tags: ['api'],
-  //     description: 'An example endpoint using async validation',
-  //     validate: {
-  //       query: asyncValidation(
-  //         {
-  //           key: Joi.string().required(),
-  //         },
-  //         {
-  //           key: (value, context) => Promise.resolve(value),
-  //         }
-  //       ),
-  //     },
-  //   },
-  // },
-  // {
-  //   method: 'GET',
-  //   path: '/example-auth',
-  //   handler: (request, reply) => {
-  //     reply({ message: 'an authenticated reply!' });
-  //   },
-  //   config: {
-  //     auth: 'jwt',
-  //     tags: ['api'],
-  //     description: 'An example of an authenticated enpoint',
-  //   },
-  // },
 ];

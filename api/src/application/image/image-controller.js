@@ -5,6 +5,7 @@ const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const uuidv4 = require('uuid/v4');
 const dbService = require('../../../db-service.js');
+const imageService = require('./image-service.js');
 const path = require('path');
 const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
@@ -18,16 +19,17 @@ var redis = require('redis'),
 const hsetAsync = promisify(client.hset).bind(client);
 module.exports = {
   get: async (request, h, err) => {
-    console.log('get Ran');
     const uploadID = request.params.uploadID;
     if (err) {
       throw err;
     }
     // Represents primitive still being in progress
-    const frameGenerationProgress = await redisService.getProgress(uploadID).catch(err => {
-      console.error(err);
-      throw Boom.notFound();
-    });
+    const frameGenerationProgress = await redisService
+      .getProgress(uploadID)
+      .catch(err => {
+        console.error(err);
+        throw Boom.notFound();
+      });
     console.log(`\n\nget progress is ${frameGenerationProgress}`);
     if (frameGenerationProgress < 100) {
       return { progress: frameGenerationProgress.toString() };
@@ -36,14 +38,12 @@ module.exports = {
       if (imageData[0].type === null) {
         return { progress: frameGenerationProgress.toString() };
       } else if (imageData[0].type === 'animation') {
-
         // Checks to see if the svgs have been processed by the gulp utility
         const animated = await redisService.getAnimated(uploadID);
         if (animated === 'true') {
           return { progress: frameGenerationProgress.toString() };
         }
       } else {
-        console.error('line 45');
         return Boom.notFound();
       }
 
@@ -53,7 +53,7 @@ module.exports = {
     }
   },
 
-  deleteImage: async (request, h, err) => {
+  deleteImageById: async (request, h, err) => {
     const imageId = request.params.imageId;
     const svg_image_deleted = await knex('image_references')
       .where('id', '=', imageId)
@@ -63,6 +63,7 @@ module.exports = {
       try {
         await unlink(pathToFile + imageId + '.svg');
         await unlink(pathToFile + imageId);
+        return h.response('Okay');
       } catch (err) {
         if (err) {
           return Boom.notFound();
@@ -71,10 +72,9 @@ module.exports = {
     } else {
       return Boom.notFound();
     }
-    return h.response('Okay');
   },
+
   getUploaded: async (request, h, err) => {
-    console.log('get uploaded ran');
     const uploadID = request.params.uploadID;
     const imageData = await dbService.getImageData(uploadID);
     const imageReference = imageData[0];
@@ -85,28 +85,25 @@ module.exports = {
       const pathToFile = `src/application/image/images/${uploadID}/css/svg/sprite.css.svg`;
       return h.file(pathToFile);
     }
+    return Boom.notFound();
   },
+
   getAll: async (request, h, err) => {
     return h.response(await dbService.getAllImages());
   },
+
   uploadImage: async function(request, h, err) {
     try {
       const imageID = uuidv4();
-      let defaults = {};
       const pathToSource = './src/application/image/images/' + imageID;
       const pathToDir = './src/application/image/images/';
-      defaults.numofshapes = 2;
-      defaults.rep = 0;
-      defaults.nth = 0;
-      defaults.mode = 1;
-      defaults.name = 'Your Picture';
       const imageSettings = {
-        mode: request.payload.mode,
+        mode: request.payload.settings.mode,
         outputfilename: request.payload.outputfilename,
         pathToSource: pathToSource,
         output: pathToDir + imageID,
         imageID: imageID,
-        numberOfShapes: request.payload.numofshapes,
+        numberOfShapes: request.payload.settings.numofshapes,
       };
       await writeFile(pathToSource, request.payload.file);
       const command = commandConstructor(imageSettings);
@@ -128,8 +125,8 @@ module.exports = {
       console.error(e);
     }
   },
+
   animate: async (request, h, err) => {
-    console.log('\n\nanimate\n\n');
     const imageID = uuidv4();
     const pathToFile = './src/application/image/images/' + imageID + '/';
     const pathToSource = pathToFile + 'uploaded';
@@ -144,7 +141,10 @@ module.exports = {
       type: 'animation',
     };
     await dbService.addImage(dbImageShape);
-    const framePromises = Array.from(request.payload.animationFrames, function(imageSettings, index) {
+    const framePromises = Array.from(request.payload.animationFrames, function(
+      imageSettings,
+      index
+    ) {
       imageSettings['frameNumber'] = index;
       imageSettings['outputfilename'] = 'frame' + index;
       imageSettings['pathToSource'] = pathToSource + '/' + imageID;
@@ -170,6 +170,3 @@ module.exports = {
     return h.response({ uploadID: imageID });
   },
 };
-
-module.exports['@singleton'] = true;
-module.exports['@require'] = ['server'];
