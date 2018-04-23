@@ -5,7 +5,6 @@ const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const uuidv4 = require('uuid/v4');
 const dbService = require('../../../db-service.js');
-const imageService = require('./image-service.js');
 const path = require('path');
 const knexfile = require('../../../knexfile.js');
 const knex = require('knex')(knexfile);
