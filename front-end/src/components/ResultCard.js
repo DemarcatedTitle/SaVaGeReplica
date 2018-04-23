@@ -32,15 +32,25 @@ export default class ResultCard extends React.PureComponent {
     const animationboxstyle = {
       width: width + 'px',
     };
-    console.log(this.props.frameCount);
     if (this.props.frameCount && this.props.dispatchFrameCount) {
       const frameCount = this.props.frameCount[this.props.imageID];
-      console.log(frameCount);
-      animationboxstyle.width =  frameCount * width + 'px';
-      animationboxstyle.animation = `slide 5s steps(${frameCount}) infinite`;
+      if (frameCount > 1) {
+        animationboxstyle.width =  frameCount * width + 'px';
+        animationboxstyle.animation = `slide 5s steps(${frameCount}) infinite`;
+      } else if (frameCount === 1) {
+        return (
+          <div className="outputCard">
+            <div className="backdrop" style={backdropstyle}>
+              {this.props.imgurl ? <embed id={this.props.imgurl} style={animationboxstyle} className={classes} type="image/svg+xml" src={this.props.imgurl} /> : null }
+            </div>
+            <a download="yourpicture.svg" href={this.props.imgurl}>
+              <RaisedButton label="Download Image" primary={true} />
+            </a>
+          </div>
+        );
+      }
     }
-    console.log(animationboxstyle);
-    const classes = this.props.dispatchFrameCount ? '' : 'animationbox';
+    const classes = this.props.dispatchFrameCount ? 'animationbox' : 'static';
     if (this.props.imgurl !== '' && typeof this.props.imgurl === 'string') {
       return (
         <div className="outputCard">

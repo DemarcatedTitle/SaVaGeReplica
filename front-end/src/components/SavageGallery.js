@@ -16,7 +16,6 @@ export default class SavageGallery extends React.PureComponent {
     };
   }
   handleOpen = tile => {
-    console.log(tile);
     this.setState({ open: true, tile: tile });
   };
   handleClose = () => {
@@ -49,7 +48,6 @@ export default class SavageGallery extends React.PureComponent {
       width: 3 * width + 'px',
     };
     // images.push('animation');
-    console.log(images);
     return (
       <div className="SavageGallery">
         <FlatButton label="Dialog" onClick={this.handleOpen} />

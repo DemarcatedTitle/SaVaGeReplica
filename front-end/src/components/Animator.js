@@ -10,8 +10,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import ResultCard from './ResultCard';
 import LinearProgress from 'material-ui/LinearProgress';
 import FrameConfigurator from './FrameConfigurator';
-// import image from '../sprite.css-4272fb9d.svg';
-// const image = require('../sprite.css-4272fb9d.svg');
 
 /* eslint-disable no-console */
 export default class Animator extends React.Component {
@@ -97,7 +95,6 @@ export default class Animator extends React.Component {
     this.props.onUpload(data);
   }
   render() {
-    console.log(`this.props.imgurl is ${this.props.imgurl}`);
     const frameArr = Array.from(this.props.frames);
     return (
       <div className="columnContainer">
@@ -223,5 +220,3 @@ export default class Animator extends React.Component {
     );
   }
 }
-// <form className="animator" onSubmit={this.handleSubmit}>
-// </form>
