@@ -57,7 +57,9 @@ module.exports = {
     const svg_image_deleted = await knex('image_references')
       .where('id', '=', imageId)
       .delete();
+    console.log(svg_image_deleted);
     if (svg_image_deleted > 0) {
+      // Animations will require more work
       const pathToFile = `src/application/image/images/`;
       try {
         await unlink(pathToFile + imageId + '.svg');
@@ -65,6 +67,7 @@ module.exports = {
         return h.response('Okay');
       } catch (err) {
         if (err) {
+          console.error(err);
           return Boom.notFound();
         }
       }

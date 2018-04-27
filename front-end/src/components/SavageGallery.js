@@ -1,9 +1,11 @@
 import React from 'react';
+import '../Animation.css';
 import { GridList, GridTile } from 'material-ui/GridList';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-// const image = require('../sprite.css-4272fb9d.svg');
+import ResultCard from './ResultCard';
+
 export default class SavageGallery extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -73,7 +75,7 @@ export default class SavageGallery extends React.PureComponent {
             />
           </div>
         </Dialog>
-        <GridList cols={3} cellHeight={360}>
+        <GridList cols={3} cellHeight={480}>
           {images.map(tile => {
             if (tile.image_location) {
               return (
@@ -84,10 +86,11 @@ export default class SavageGallery extends React.PureComponent {
                     this.handleOpen(tile);
                   }}
                 >
-                  <img
-                    className={tile.name}
-                    src={tile.image_location}
-                    alt={tile.name}
+                  <ResultCard
+                    dispatchFrameCount={this.props.dispatchFrameCount}
+                    imageID={tile.id}
+                    imgurl={tile.image_location}
+                    frameCount={this.props.frameCount}
                   />
                 </GridTile>
               );
