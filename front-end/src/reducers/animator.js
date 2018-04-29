@@ -2,7 +2,7 @@ const uuid = require('uuid/v4');
 function newFrame() {
   return new Map([
     ['numberOfShapes', ''],
-    ['mode', '1'],
+    ['mode', 1],
     ['rep', ''],
     ['nth', ''],
     ['alpha', ''],

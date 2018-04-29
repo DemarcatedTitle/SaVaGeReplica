@@ -92,7 +92,7 @@ export default class FrameConfigurator extends React.Component {
           </div>
           <div className="formElement">
             <SelectField
-              value={this.state.mode}
+              value={this.props.frame.get('mode')}
               onChange={(event, key, payload) => {
                 this.handleChange(payload, 'mode');
               }}

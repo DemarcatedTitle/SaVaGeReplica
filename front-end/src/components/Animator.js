@@ -210,6 +210,7 @@ export default class Animator extends React.Component {
                     frameNumber={frame[0]}
                     frameNumberChange={this.props.frameNumberChange}
                     valueChanged={this.props.valueChanged}
+                    frame={frame[1]}
                   />
                 );
               })}
