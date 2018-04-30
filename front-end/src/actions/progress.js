@@ -24,10 +24,19 @@ export const fetchProgress = function fetchProgress(payload) {
                     dispatch,
                     payload
                   );
+                  return dispatch({
+                    type: 'PROGRESS_CHECKED',
+                    progress: progress,
+                  });
+
                 } else {
                   fetchImageById(dispatch, 'PROGRESS_COMPLETE')(payload.get('uploadID'));
+                  return dispatch({
+                    type: 'PROGRESS_CHECKED',
+                    progress: progress,
+                  });
                 }
-              })
+	      })
               .catch(err => console.log(err));
           } else if (contentType === 'image/svg+xml') {
             response

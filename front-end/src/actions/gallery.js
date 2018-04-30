@@ -26,31 +26,34 @@ export const fetchAllImages = function fetchAllImages() {
   };
 };
 
-export const fetchImage = (dispatch) => function(image) {
-  dispatch({ type: 'IMAGE_REQUEST_STARTED' });
-  fetch('/api/image/uploaded/' + image.image_id, {
-    method: 'GET',
-    credentials: 'same-origin',
-  })
-    .then(response =>
-      response
-        .blob()
-        .then(imageBlob => {
-          const imageLocation = URL.createObjectURL(imageBlob);
-          dispatch({
-            type: 'IMAGE_REQUEST_SUCCESSFUL',
-            payload: {
-              imageLocation: imageLocation,
-              name: image.name,
-              id: image.image_id,
-            },
-          });
-        })
-        .catch(err => {
-          throw err;
-        })
-    )
-    .catch(err => {
-      throw err;
-    });
-};
+export const fetchImage = dispatch =>
+  function(image) {
+    dispatch({ type: 'IMAGE_REQUEST_STARTED' });
+    fetch('/api/image/uploaded/' + image.image_id, {
+      method: 'GET',
+      credentials: 'same-origin',
+    })
+      .then(response => {
+        if (response.status < 400) {
+          return response
+            .blob()
+            .then(imageBlob => {
+              const imageLocation = URL.createObjectURL(imageBlob);
+              dispatch({
+                type: 'IMAGE_REQUEST_SUCCESSFUL',
+                payload: {
+                  imageLocation: imageLocation,
+                  name: image.name,
+                  id: image.image_id,
+                },
+              });
+            })
+            .catch(err => {
+              throw err;
+            });
+        }
+      })
+      .catch(err => {
+        throw err;
+      });
+  };
