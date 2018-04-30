@@ -1,9 +1,11 @@
 import React from 'react';
+import '../Animation.css';
 import { GridList, GridTile } from 'material-ui/GridList';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-// const image = require('../sprite.css-4272fb9d.svg');
+import ResultCard from './ResultCard';
+
 export default class SavageGallery extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -13,6 +15,7 @@ export default class SavageGallery extends React.PureComponent {
       tile: { name: '', image_location: '' },
       width: 360,
       images: [],
+      pageNumber: 0,
     };
   }
   handleOpen = tile => {
@@ -40,6 +43,7 @@ export default class SavageGallery extends React.PureComponent {
     //   width: 'fit-content',
     // };
     let { images } = this.props;
+    const page = images.slice(this.state.pageNumber, this.state.pageNumber + 9);
     const width = this.state.width;
     const backdropstyle = {
       width: width + 'px',
@@ -50,7 +54,19 @@ export default class SavageGallery extends React.PureComponent {
     // images.push('animation');
     return (
       <div className="SavageGallery">
-        <FlatButton label="Dialog" onClick={this.handleOpen} />
+        <FlatButton
+          label="Previous"
+          primary={false}
+          onClick={() =>
+            this.setState({ pageNumber: this.state.pageNumber - 9 })}
+        />
+        <FlatButton
+          label="Next"
+          primary={false}
+          onClick={() =>
+            this.setState({ pageNumber: this.state.pageNumber + 9 })}
+        />
+
         <Dialog
           className="gallerydialog"
           title="Image"
@@ -73,8 +89,8 @@ export default class SavageGallery extends React.PureComponent {
             />
           </div>
         </Dialog>
-        <GridList cols={3} cellHeight={360}>
-          {images.map(tile => {
+        <GridList cols={3} cellHeight={280}>
+          {page.map(tile => {
             if (tile.image_location) {
               return (
                 <GridTile
@@ -84,10 +100,11 @@ export default class SavageGallery extends React.PureComponent {
                     this.handleOpen(tile);
                   }}
                 >
-                  <img
-                    className={tile.name}
-                    src={tile.image_location}
-                    alt={tile.name}
+                  <ResultCard
+                    dispatchFrameCount={this.props.dispatchFrameCount}
+                    imageID={tile.id}
+                    imgurl={tile.image_location}
+                    frameCount={this.props.frameCount}
                   />
                 </GridTile>
               );
@@ -100,8 +117,7 @@ export default class SavageGallery extends React.PureComponent {
                     this.handleOpen(tile);
                   }}
                 >
-                  <div className="backdrop" style={backdropstyle}>
-                  </div>
+                  <div className="backdrop" style={backdropstyle} />
                 </GridTile>
               );
             }
