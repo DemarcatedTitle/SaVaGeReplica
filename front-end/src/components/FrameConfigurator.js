@@ -1,14 +1,14 @@
 import React from 'react';
 import '../Animation.css';
 import Dropzone from 'react-dropzone';
-import Paper from 'material-ui/Paper';
-import Dialog from 'material-ui/Dialog';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
+import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
 import ResultCard from './ResultCard';
-import LinearProgress from 'material-ui/LinearProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 const uuid = require('uuid/v4');
 // import image from '../sprite.css-4272fb9d.svg';
 export default class FrameConfigurator extends React.Component {
@@ -69,7 +69,7 @@ export default class FrameConfigurator extends React.Component {
   }
   render() {
     const actions = [
-      <RaisedButton label="Cancel" primary={true} onClick={this.handleClose} />,
+      <Button label="Cancel" color='primary' onClick={this.handleClose} />,
     ];
     const width = this.state.width;
     const backdropstyle = {
@@ -87,16 +87,16 @@ export default class FrameConfigurator extends React.Component {
           <div className="formElement">
             <TextField
               onChange={event => this.handleTyping(event, 'numberOfShapes')}
-              hintText="Number of Shapes"
+              placeholder="Number of Shapes"
             />
           </div>
           <div className="formElement">
-            <SelectField
+            <Select
               value={this.props.frame.get('mode')}
               onChange={(event, key, payload) => {
                 this.handleChange(payload, 'mode');
               }}
-              floatingLabelText="Mode"
+              label="Mode"
             >
               <MenuItem value={0} primaryText="Combo" />
               <MenuItem value={1} primaryText="Triangle" />
@@ -107,13 +107,13 @@ export default class FrameConfigurator extends React.Component {
               <MenuItem value={6} primaryText="Beziers" />
               <MenuItem value={7} primaryText="Rotated Ellipse" />
               <MenuItem value={8} primaryText="Polygon" />
-            </SelectField>
+            </Select>
           </div>
           <div className="formElement">
             <TextField
               id="rep"
               onChange={event => this.handleTyping(event, 'rep')}
-              hintText="Rep"
+              placeholder="Rep"
             />
             <Dialog
               title="Rep"
@@ -133,7 +133,7 @@ export default class FrameConfigurator extends React.Component {
             <TextField
               id="nth"
               onChange={event => this.handleTyping(event, 'nth')}
-              hintText="Nth"
+              placeholder="Nth"
             />
             <Dialog
               title="Test"
@@ -152,14 +152,14 @@ export default class FrameConfigurator extends React.Component {
             <TextField
               id="alpha"
               onChange={event => this.handleTyping(event, 'alpha')}
-              hintText="Alpha"
+              placeholder="Alpha"
             />
           </div>
           <div className="formElement">
             #<TextField
               id="backgroundcolor"
               onChange={event => this.handleTyping(event, 'backgroundcolor')}
-              hintText="Background Color"
+              placeholder="Background Color"
             />
           </div>
         </form>

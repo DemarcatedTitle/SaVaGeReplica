@@ -5,7 +5,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { compose, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import TextApp from './reducers/index.js';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import Root from './Root';
 // import createHistory from 'history/createBrowserHistory';
 // import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -30,9 +30,7 @@ let store = createStore(TextApp, composeEnhancers(applyMiddleware(thunk)));
 //   document.getElementById('root')
 // );
 ReactDOM.render(
-  <MuiThemeProvider>
-    <Root store={store} />
-  </MuiThemeProvider>,
+    <Root store={store} />,
   document.getElementById('root')
 );
 registerServiceWorker();

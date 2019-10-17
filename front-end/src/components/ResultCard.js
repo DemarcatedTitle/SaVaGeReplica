@@ -1,5 +1,5 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 import { frameCount } from '../actions/frameCount';
 export default class ResultCard extends React.PureComponent {
   constructor(props) {
@@ -36,7 +36,6 @@ export default class ResultCard extends React.PureComponent {
 
     if (this.props.frameCount && this.props.dispatchFrameCount) {
       const frameCount = this.props.frameCount[this.props.imageID];
-      console.log(frameCount);
       if (frameCount > 1) {
         animationboxstyle.width = frameCount * width + 'px';
         animationboxstyle.animation = `slide 5s steps(${frameCount}) infinite`;
@@ -55,7 +54,9 @@ export default class ResultCard extends React.PureComponent {
               ) : null}
             </div>
             <a download="yourpicture.svg" href={this.props.imgurl}>
-              <RaisedButton label="Download Image" primary={true} />
+              <Button color="primary">
+                Download Image
+              </Button>
             </a>
           </div>
         );
@@ -76,7 +77,7 @@ export default class ResultCard extends React.PureComponent {
             ) : null}
           </div>
           <a download="yourpicture.svg" href={this.props.imgurl}>
-            <RaisedButton label="Download Image" primary={true} />
+            <Button color="primary">Download Image</Button>
           </a>
         </div>
       );

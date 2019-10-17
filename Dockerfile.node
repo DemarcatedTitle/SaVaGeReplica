@@ -5,8 +5,7 @@ ARG WORKING_DIR=/src
 
 WORKDIR $WORKING_DIR
 
-COPY $PACKAGE_PATH/package.json $WORKING_DIR/package.json
-COPY $PACKAGE_PATH/package-lock.json $WORKING_DIR/package-lock.json
+COPY $PACKAGE_PATH/ $WORKING_DIR/
 RUN npm install -g -s --no-progress yarn && \
     yarn 
 

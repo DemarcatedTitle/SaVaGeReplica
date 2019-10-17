@@ -1,14 +1,14 @@
 import React from 'react';
 import '../Animation.css';
 import Dropzone from 'react-dropzone';
-import Paper from 'material-ui/Paper';
-// import Dialog from 'material-ui/Dialog';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
+import Paper from '@material-ui/core/Paper';
+// import Dialog from '@material-ui/core/Dialog';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
 import ResultCard from './ResultCard';
-import LinearProgress from 'material-ui/LinearProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import FrameConfigurator from './FrameConfigurator';
 
 /* eslint-disable no-console */
@@ -142,12 +142,12 @@ export default class Animator extends React.Component {
                 <TextField
                   id="filename"
                   onChange={this.handleTyping}
-                  hintText="Output Filename"
+                  placeholder="Output Filename"
                 />
               </div>
               <div className="formElement">
-                <SelectField
-                  floatingLabelText="Output Filetype"
+                <Select
+                  label="Output Filetype"
                   value={this.props.animationInformation.filetype}
                   onChange={this.handleChange}
                 >
@@ -155,20 +155,20 @@ export default class Animator extends React.Component {
                   <MenuItem value={1} primaryText="jpg" />
                   <MenuItem value={2} primaryText="svg" />
                   <MenuItem value={3} primaryText="gif" />
-                </SelectField>
+                </Select>
               </div>
               <div className="formElement">
                 <TextField
                   id="resize"
                   onChange={this.handleTyping}
-                  hintText="Resize"
+                  placeholder="Resize"
                 />
               </div>
               <div className="formElement">
                 <TextField
                   id="outputsize"
                   onChange={this.handleTyping}
-                  hintText="Output Image Size"
+                  placeholder="Output Image Size"
                 />
               </div>
             </Paper>
@@ -178,7 +178,7 @@ export default class Animator extends React.Component {
                 Current Image
                 {this.props.imgurl === '' ? (
                   <LinearProgress
-                    mode="determinate"
+                    variant="determinate"
                     value={this.props.progress}
                   />
                 ) : (
@@ -191,11 +191,15 @@ export default class Animator extends React.Component {
                     frameCount={this.props.frameCount}
                   />
                 )}
-                <RaisedButton
+                <Button
                   onClick={this.uploadImage}
                   label="Start Process"
-                  primary={true}
-                />
+                  color='primary'
+                >
+                  <span>
+                    Test
+                  </span>
+                </Button>
               </Paper>
             </div>
           </div>

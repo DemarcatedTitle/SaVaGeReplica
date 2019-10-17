@@ -1,10 +1,10 @@
-import React from 'react';
-import '../Animation.css';
-import { GridList, GridTile } from 'material-ui/GridList';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import ResultCard from './ResultCard';
+import React from "react";
+import "../Animation.css";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
+import Dialog from "@material-ui/core/Dialog";
+import Button from "@material-ui/core/Button";
+import ResultCard from "./ResultCard";
 
 export default class SavageGallery extends React.PureComponent {
   constructor(props) {
@@ -12,10 +12,10 @@ export default class SavageGallery extends React.PureComponent {
     this.state = {
       gallery: [],
       open: false,
-      tile: { name: '', image_location: '' },
+      tile: { name: "", image_location: "" },
       width: 360,
       images: [],
-      pageNumber: 0,
+      pageNumber: 0
     };
   }
   handleOpen = tile => {
@@ -27,7 +27,7 @@ export default class SavageGallery extends React.PureComponent {
   deleteImage = imageID => {
     this.setState({ open: false });
     this.props.deleteImage(imageID);
-    console.log('Deleting image...');
+    console.log("Deleting image...");
   };
   componentDidMount() {
     this.props.fetchAllImages();
@@ -35,7 +35,9 @@ export default class SavageGallery extends React.PureComponent {
 
   render() {
     const actions = [
-      <FlatButton label="Cancel" primary={true} onClick={this.handleClose} />,
+      <Button color="primary" onClick={this.handleClose}>
+        Cancel
+      </Button>
     ];
     // const customContentStyle = {
     //   maxWidth: 'none',
@@ -46,26 +48,28 @@ export default class SavageGallery extends React.PureComponent {
     const page = images.slice(this.state.pageNumber, this.state.pageNumber + 9);
     const width = this.state.width;
     const backdropstyle = {
-      width: width + 'px',
+      width: width + "px"
     };
     const animationboxstyle = {
-      width: 3 * width + 'px',
+      width: 3 * width + "px"
     };
     // images.push('animation');
     return (
       <div className="SavageGallery">
-        <FlatButton
-          label="Previous"
-          primary={false}
+        <Button
           onClick={() =>
-            this.setState({ pageNumber: this.state.pageNumber - 9 })}
-        />
-        <FlatButton
-          label="Next"
-          primary={false}
+            this.setState({ pageNumber: this.state.pageNumber - 9 })
+          }
+        >
+          Previous
+        </Button>
+        <Button
           onClick={() =>
-            this.setState({ pageNumber: this.state.pageNumber + 9 })}
-        />
+            this.setState({ pageNumber: this.state.pageNumber + 9 })
+          }
+        >
+          Next
+        </Button>
 
         <Dialog
           className="gallerydialog"
@@ -73,7 +77,7 @@ export default class SavageGallery extends React.PureComponent {
           actions={actions}
           modal={false}
           open={this.state.open}
-          onRequestClose={this.handleClose}
+          onClose={this.handleClose}
         >
           <div className="columnContainer">
             <img
@@ -81,19 +85,20 @@ export default class SavageGallery extends React.PureComponent {
               src={this.state.tile.image_location}
               alt={this.state.tile.name}
             />
-            <RaisedButton
-              label="Delete"
+            <Button
               onClick={() => {
                 this.deleteImage(this.state.tile.id);
               }}
-            />
+            >
+              Delete
+            </Button>
           </div>
         </Dialog>
         <GridList cols={3} cellHeight={280}>
           {page.map(tile => {
             if (tile.image_location) {
               return (
-                <GridTile
+                <GridListTile
                   key={tile.id}
                   title={tile.name}
                   onClick={() => {
@@ -106,11 +111,11 @@ export default class SavageGallery extends React.PureComponent {
                     imgurl={tile.image_location}
                     frameCount={this.props.frameCount}
                   />
-                </GridTile>
+                </GridListTile>
               );
             } else {
               return (
-                <GridTile
+                <GridListTile
                   key="lsjflsejflsejflskejlbkjblkejbseklj"
                   title="Animation"
                   onClick={() => {
@@ -118,7 +123,7 @@ export default class SavageGallery extends React.PureComponent {
                   }}
                 >
                   <div className="backdrop" style={backdropstyle} />
-                </GridTile>
+                </GridListTile>
               );
             }
           })}
