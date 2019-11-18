@@ -102,7 +102,10 @@ export default class Animator extends React.Component {
       <div className="columnContainer">
         <div className="rowContainer">
           <div className="viewer">
-            <Upload accepted={this.state.accepted} updateAcceptance={this.updateAcceptance}></Upload>
+            <Upload
+              accepted={this.state.accepted}
+              updateAcceptance={this.updateAcceptance}
+            ></Upload>
             <Paper className="paper section">
               <div className="horizontal">
                 <div
@@ -153,12 +156,29 @@ export default class Animator extends React.Component {
                   placeholder="Output Image Size"
                 />
               </div>
+              <div className="controls section">
+                <Paper className="animator">
+                  <div className="controls section configurator">
+                    {frameArr.map(frame => {
+                      return (
+                        <FrameConfigurator
+                          key={frame[1].get("key")}
+                          frameNumber={frame[0]}
+                          frameNumberChange={this.props.frameNumberChange}
+                          valueChanged={this.props.valueChanged}
+                          frame={frame[1]}
+                        />
+                      );
+                    })}
+                  </div>
+                </Paper>
+              </div>
             </Paper>
 
             <div className="section">
               <Paper className="paper outputCard">
                 Current Image
-                {this.props.imgurl === '' ? (
+                {this.props.imgurl === "" ? (
                   <LinearProgress
                     variant="determinate"
                     value={this.props.progress}
@@ -176,32 +196,13 @@ export default class Animator extends React.Component {
                 <Button
                   onClick={this.uploadImage}
                   label="Start Process"
-                  color='primary'
+                  color="primary"
                 >
-                  <span>
-                    Test
-                  </span>
+                  <span>Test</span>
                 </Button>
               </Paper>
             </div>
           </div>
-        </div>
-        <div className="controls section">
-          <Paper className="animator">
-            <div className="controls section configurator">
-              {frameArr.map(frame => {
-                return (
-                  <FrameConfigurator
-                    key={frame[1].get('key')}
-                    frameNumber={frame[0]}
-                    frameNumberChange={this.props.frameNumberChange}
-                    valueChanged={this.props.valueChanged}
-                    frame={frame[1]}
-                  />
-                );
-              })}
-            </div>
-          </Paper>
         </div>
       </div>
     );
