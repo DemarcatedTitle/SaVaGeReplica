@@ -1,5 +1,6 @@
 import React from 'react';
 import '../Animation.css';
+import sharedFunctions from '../util/sharedFunctions'
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import Select from '@material-ui/core/Select';
@@ -22,7 +23,7 @@ export default class TextBox extends React.Component {
     this.uploadImage = this.uploadImage.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.updateAcceptance = this.updateAcceptance.bind(this);
+    this.updateAcceptance = sharedFunctions.updateAcceptance.bind(this);
     this.state = {
       width: '2048',
       mode: 1,
@@ -70,9 +71,6 @@ export default class TextBox extends React.Component {
     data.append('file', this.state.accepted[0]);
     data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);
-  }
-  updateAcceptance(accepted) {
-    this.setState({accepted});
   }
   render() {
     const actions = [

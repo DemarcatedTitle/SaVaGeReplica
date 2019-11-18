@@ -1,15 +1,16 @@
 import React from 'react';
 import '../Animation.css';
-import Dropzone from 'react-dropzone';
 import Paper from '@material-ui/core/Paper';
 // import Dialog from '@material-ui/core/Dialog';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
+import sharedFunctions from '../util/sharedFunctions'
 import ResultCard from './ResultCard';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import FrameConfigurator from './FrameConfigurator';
+import Upload from './Upload';
 
 /* eslint-disable no-console */
 export default class Animator extends React.Component {
@@ -21,6 +22,7 @@ export default class Animator extends React.Component {
     this.uploadImage = this.uploadImage.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.updateAcceptance = sharedFunctions.updateAcceptance.bind(this);
     this.state = {
       width: '2048',
       mode: 1,
@@ -100,27 +102,7 @@ export default class Animator extends React.Component {
       <div className="columnContainer">
         <div className="rowContainer">
           <div className="viewer">
-            <Paper className="upload paper section">
-              <p>Uploaded Image</p>
-              <Dropzone
-                style={{}}
-                accept="image/png, image/jpg, image/jpeg"
-                onDrop={(accepted, rejected) => {
-                  this.setState({ accepted, rejected });
-                }}
-              >
-                <div>
-                  {this.state.accepted[0] ? (
-                    <img
-                      alt="Your upload"
-                      src={this.state.accepted[0].preview}
-                    />
-                  ) : (
-                    ''
-                  )}
-                </div>
-              </Dropzone>
-            </Paper>
+            <Upload accepted={this.state.accepted} updateAcceptance={this.updateAcceptance}></Upload>
             <Paper className="paper section">
               <div className="horizontal">
                 <div
