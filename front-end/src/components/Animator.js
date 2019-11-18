@@ -172,6 +172,13 @@ export default class Animator extends React.Component {
                     })}
                   </div>
                 </Paper>
+                <Button
+                  onClick={this.uploadImage}
+                  label="Start Process"
+                  color="primary"
+                >
+                  <span>Test</span>
+                </Button>
               </div>
             </Paper>
 
