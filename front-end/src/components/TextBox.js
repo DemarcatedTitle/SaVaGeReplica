@@ -1,6 +1,5 @@
 import React from 'react';
 import '../Animation.css';
-import Dropzone from 'react-dropzone';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import Select from '@material-ui/core/Select';
@@ -9,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import ResultCard from './ResultCard';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Upload from './Upload';
 // import image from '../sprite.css-4272fb9d.svg';
 // const image = require('../sprite.css-4272fb9d.svg');
 
@@ -22,6 +22,7 @@ export default class TextBox extends React.Component {
     this.uploadImage = this.uploadImage.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.updateAcceptance = this.updateAcceptance.bind(this);
     this.state = {
       width: '2048',
       mode: 1,
@@ -70,6 +71,9 @@ export default class TextBox extends React.Component {
     data.append('filename', this.state.accepted[0].name);
     this.props.onUpload(data);
   }
+  updateAcceptance(accepted) {
+    this.setState({accepted});
+  }
   render() {
     const actions = [
       <Button label="Cancel" color='primary' onClick={this.handleClose}>
@@ -88,24 +92,7 @@ export default class TextBox extends React.Component {
 
     return (
       <div className="rowContainer">
-        <Paper className="upload paper section">
-          <p>Uploaded Image</p>
-          <Dropzone
-            style={{}}
-            accept="image/png, image/jpg, image/jpeg"
-            onDrop={(accepted, rejected) => {
-              this.setState({ accepted, rejected });
-            }}
-          >
-            <div>
-              {this.state.accepted[0] ? (
-                <img alt="Your upload" src={this.state.accepted[0].preview} />
-              ) : (
-                ''
-              )}
-            </div>
-          </Dropzone>
-        </Paper>
+        <Upload accepted={this.state.accepted} updateAcceptance={this.updateAcceptance}></Upload>
         <div className="controls section">
           <Paper className="paper">
             <form onSubmit={this.handleSubmit}>

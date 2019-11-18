@@ -3,6 +3,12 @@
   overflow: hidden;
   width: 1600px;
 }
+
+.picturebox {
+  /* Width must be the number of frames multiplied by the width of the backdrop. */
+  width: 4800px;
+}
+
 .animationbox {
   /* Width must be the number of frames multiplied by the width of the backdrop. */
   width: 4800px;

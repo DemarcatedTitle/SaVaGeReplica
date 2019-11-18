@@ -70,7 +70,7 @@ export default class ResultCard extends React.PureComponent {
               <embed
                 id={this.props.imgurl}
                 style={animationboxstyle}
-                className="animationbox"
+                className="picturebox"
                 type="image/svg+xml"
                 src={this.props.imgurl}
               />
