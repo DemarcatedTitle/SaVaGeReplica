@@ -177,7 +177,7 @@ export default class Animator extends React.Component {
                   label="Start Process"
                   color="primary"
                 >
-                  <span>Test</span>
+                  Submit
                 </Button>
               </div>
             </Paper>
@@ -200,13 +200,6 @@ export default class Animator extends React.Component {
                     frameCount={this.props.frameCount}
                   />
                 )}
-                <Button
-                  onClick={this.uploadImage}
-                  label="Start Process"
-                  color="primary"
-                >
-                  <span>Test</span>
-                </Button>
               </Paper>
             </div>
           </div>

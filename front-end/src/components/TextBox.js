@@ -211,9 +211,7 @@ export default class TextBox extends React.Component {
                 label="Start Process"
                 color='primary'
               >
-                <span>
-                  Test
-                </span>
+                Submit
               </Button>
             </form>
           </Paper>
