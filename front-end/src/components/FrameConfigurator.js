@@ -1,15 +1,10 @@
 import React from 'react';
 import '../Animation.css';
-import Dropzone from 'react-dropzone';
-import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
-import ResultCard from './ResultCard';
-import LinearProgress from '@material-ui/core/LinearProgress';
-const uuid = require('uuid/v4');
 // import image from '../sprite.css-4272fb9d.svg';
 export default class FrameConfigurator extends React.Component {
   constructor(props) {
@@ -71,13 +66,13 @@ export default class FrameConfigurator extends React.Component {
     const actions = [
       <Button label="Cancel" color='primary' onClick={this.handleClose} />,
     ];
-    const width = this.state.width;
-    const backdropstyle = {
-      width: width + 'px',
-    };
-    const animationboxstyle = {
-      width: 3 * width + 'px',
-    };
+    // const width = this.state.width;
+    // const backdropstyle = {
+    //   width: width + 'px',
+    // };
+    // const animationboxstyle = {
+    //   width: 3 * width + 'px',
+    // };
 
     return (
       <div className="configurator">

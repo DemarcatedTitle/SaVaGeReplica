@@ -50,9 +50,9 @@ export default class SavageGallery extends React.PureComponent {
     const backdropstyle = {
       width: width + "px"
     };
-    const animationboxstyle = {
-      width: 3 * width + "px"
-    };
+    // const animationboxstyle = {
+    //   width: 3 * width + "px"
+    // };
     // images.push('animation');
     return (
       <div className="SavageGallery">

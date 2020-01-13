@@ -74,10 +74,10 @@ export default class Animator extends React.Component {
     //     data.append(field[1].id, field[1].value);
     //   }
     // });
-    const animationUpload = [
-      this.state.accepted[0],
-      this.state.accepted[0].name,
-    ];
+    // const animationUpload = [
+    //   this.state.accepted[0],
+    //   this.state.accepted[0].name,
+    // ];
     const animationInformation = this.props.animationInformation;
     const animationFrames = [];
     this.props.animator.forEach(function(frame, number) {

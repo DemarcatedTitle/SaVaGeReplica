@@ -30,7 +30,7 @@ const progress = (
       newState['imgurl'] = '';
       newState['progress'] = 0;
       return [...state, newState];
-    case 'ROUTE_CHANGE':
+    case ROUTE_CHANGE:
       newState['imgurl'] = '';
       newState['progress'] = 0;
       return [...state, newState];
